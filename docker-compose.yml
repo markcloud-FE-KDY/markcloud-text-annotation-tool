@@ -1,0 +1,31 @@
+version: "3.9"
+
+services:
+  # text-review:
+  #   container_name: 'text-review'
+  #   build:
+  #     context: ./
+  #     dockerfile: Dockerfile
+  #   environment:
+  #     TZ: Asia/Seoul
+  #     PYTHONUNBUFFERED: 1      
+  #   tty: true
+  #   ipc: host
+  #   stdin_open: true    
+  #   restart: on-failure:3  
+  #   volumes:
+  #     - ./text-review/update_file:/text-review/update_file:rw      
+  #   command: ["python3", "/text-review/main.py", "--date", $date]
+
+
+  app:
+    container_name: "app"    
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    env_file: .env
+    volumes:
+      - ./app:/app
+    ports:
+      - 8000:8080
+    command: ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8080", "--reload"]
