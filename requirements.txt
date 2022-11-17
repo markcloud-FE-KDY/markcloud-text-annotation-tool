@@ -1,0 +1,9 @@
+pymongo
+# torch
+# tokenizers==0.11.2
+# simpletransformers
+# beautifulsoup4
+fastapi
+uvicorn
+motor
+python-dotenv
