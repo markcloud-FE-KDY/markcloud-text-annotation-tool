@@ -47,65 +47,65 @@ def retrieve_markdicts():
 #         return markdict_helper(markdict)
 
 
-def retrieve_markdict(id: Optional[str] = None) -> dict:
-    if not id:
+def retrieve_markdict(oid: Optional[str] = None) -> dict:
+    if not oid:
         markdict = list(
             mark_dict_collection.find({"humanCheck": False}).sort("_id", 1).limit(1)
         )[0]
     else:
-        markdict = mark_dict_collection.find_one({"_id": ObjectId(id)})
+        markdict = mark_dict_collection.find_one({"_id": ObjectId(oid)})
     if markdict:
         return markdict_helper(markdict)
 
 
-def retrieve_previous(id: Optional[str] = None) -> dict:
-    if not id:
+def retrieve_previous(oid: Optional[str] = None) -> dict:
+    if not oid:
         return None
-    previous = list(
-        mark_dict_collection.find({"_id": {"$lt": ObjectId(id)}, "humanCheck": False})
+    previous_data = list(
+        mark_dict_collection.find({"_id": {"$lt": ObjectId(oid)}, "humanCheck": False})
         .sort("_id", -1)
         .limit(1)
     )
-    if previous:
-        return markdict_helper(previous[0])
+    if previous_data:
+        return markdict_helper(previous_data[0])
 
 
-def retrieve_next(id: Optional[str] = None) -> dict:
-    if not id:
-        next = list(
+def retrieve_next(oid: Optional[str] = None) -> dict:
+    if not oid:
+        next_data = list(
             mark_dict_collection.find({"humanCheck": False})
             .sort("_id", 1)
             .skip(1)
             .limit(1)
         )[0]
     else:
-        next = mark_dict_collection.find_one(
-            {"_id": {"$gt": ObjectId(id)}, "humanCheck": False}
+        next_data = mark_dict_collection.find_one(
+            {"_id": {"$gt": ObjectId(oid)}, "humanCheck": False}
         )
-    if next:
-        return markdict_helper(next)
+    if next_data:
+        return markdict_helper(next_data)
 
 
 # Update
-def update_modelResult(id: str, data: dict):
+def update_modelResult(oid: str, data: dict):
     if len(data) < 1:
         return False
-    id = ObjectId(id)
+    oid = ObjectId(oid)
     mark_dict_collection.update_one(
-        {"_id": id},
+        {"_id": oid},
         {"$set": data},
     )
 
 
-def update_humanCheck(id: str):
-    id = ObjectId(id)
-    mark_dict_collection.update_one({"_id": id}, {"$set": {"humanCheck": True}})
+def update_humanCheck(oid: str):
+    oid = ObjectId(oid)
+    mark_dict_collection.update_one({"_id": oid}, {"$set": {"humanCheck": True}})
 
 
-def add_previousResult(id: str, previousResult: str):
-    id = ObjectId(id)
+def add_previousResult(oid: str, previousResult: str):
+    oid = ObjectId(oid)
     mark_dict_collection.update_one(
-        {"_id": id},
+        {"_id": oid},
         {"$set": {"previousResult": previousResult}},
     )
 
