@@ -19,10 +19,7 @@ def get_date_range(inputdate):
         else:
             start = datetime.strptime(dr[0], "%Y%m%d")
             end = datetime.strptime(dr[1], "%Y%m%d")
-            dt_list = [
-                (start + timedelta(days=i)).strftime("%Y%m%d")
-                for i in range((end - start).days + 1)
-            ]
+            dt_list = [(start + timedelta(days=i)).strftime("%Y%m%d") for i in range((end - start).days + 1)]
 
     return dt_list
 

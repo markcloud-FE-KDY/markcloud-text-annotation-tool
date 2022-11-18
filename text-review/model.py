@@ -14,4 +14,3 @@ def get_engtokor(pretrained_model_path, diff_result: list):
     model_result = model.predict(diff_result)
 
     return diff_result, model_result
-

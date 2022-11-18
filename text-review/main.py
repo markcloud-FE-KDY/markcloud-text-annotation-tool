@@ -35,9 +35,7 @@ if __name__ == "__main__":
     diff_result = get_difference(processed_data, src_eng)
 
     # model돌려서 model_result 얻기
-    productNameEngList, modelResultList = get_engtokor(
-        pretrained_model_path, diff_result
-    )
+    productNameEngList, modelResultList = get_engtokor(pretrained_model_path, diff_result)
 
     hc_true = []
     hc_false = []

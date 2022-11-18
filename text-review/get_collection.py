@@ -9,9 +9,7 @@ def get_collection(db_name, collection_name):
     MONGO_HOST = "211.47.7.6"
     MONGO_PORT = 27017
 
-    client = MongoClient(
-        f"mongodb://{MONGO_USER}:{MONGO_PWD}@{MONGO_HOST}:{MONGO_PORT}"
-    )
+    client = MongoClient(f"mongodb://{MONGO_USER}:{MONGO_PWD}@{MONGO_HOST}:{MONGO_PORT}")
 
     db = client[db_name]
     coll = db[collection_name]
