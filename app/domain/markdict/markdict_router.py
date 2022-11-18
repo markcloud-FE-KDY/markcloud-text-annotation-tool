@@ -29,9 +29,7 @@ def update_markdict_data(oid: str, req: UpdateMarkDictModel = Body(...)):
     req = {k: v for k, v in req.dict().items() if v is not None}
     markdict = retrieve_markdict(oid)
     if not markdict:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail="Data not found"
-        )
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Data not found")
     previousResult = markdict["modelResult"]
 
     update_modelResult(oid, req)

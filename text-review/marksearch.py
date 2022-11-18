@@ -22,9 +22,7 @@ def marksearch(target_kor):
         "Authorization": "Basic aGFleXVsOjEzNjExIQ==",
     }
     try:
-        response = requests.post(
-            url, headers=headers, data=payload, files=files, timeout=60
-        )
+        response = requests.post(url, headers=headers, data=payload, files=files, timeout=60)
 
         kor, eng = [], []
         soup = BeautifulSoup(response.text, "html.parser")

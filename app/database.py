@@ -25,11 +25,17 @@ def markdict_helper(markdict) -> dict:
         "id": str(markdict["_id"]),
         "productNameEng": str(markdict["productNameEng"]),
         "modelResult": str(markdict["modelResult"]),
-        "similarWords": re.findall(r"'(.*?)'", markdict["similarWords"])
-        if "similarWords" in markdict
-        else "",
+        "similarWords": re.findall(r"'(.*?)'", markdict["similarWords"]) if "similarWords" in markdict else "",
         "humanCheck": bool(markdict["humanCheck"]),
     }
+
+
+def train():
+    ...
+    
+def test():
+    ...
+
 
 
 # Retrieve all markdicts(humanCheck:false) present in the database
@@ -49,9 +55,7 @@ def retrieve_markdicts():
 
 def retrieve_markdict(oid: Optional[str] = None) -> dict:
     if not oid:
-        markdict = list(
-            mark_dict_collection.find({"humanCheck": False}).sort("_id", 1).limit(1)
-        )[0]
+        markdict = list(mark_dict_collection.find({"humanCheck": False}).sort("_id", 1).limit(1))[0]
     else:
         markdict = mark_dict_collection.find_one({"_id": ObjectId(oid)})
     if markdict:
@@ -62,9 +66,7 @@ def retrieve_previous(oid: Optional[str] = None) -> dict:
     if not oid:
         return None
     previous_data = list(
-        mark_dict_collection.find({"_id": {"$lt": ObjectId(oid)}, "humanCheck": False})
-        .sort("_id", -1)
-        .limit(1)
+        mark_dict_collection.find({"_id": {"$lt": ObjectId(oid)}, "humanCheck": False}).sort("_id", -1).limit(1)
     )
     if previous_data:
         return markdict_helper(previous_data[0])
@@ -72,16 +74,9 @@ def retrieve_previous(oid: Optional[str] = None) -> dict:
 
 def retrieve_next(oid: Optional[str] = None) -> dict:
     if not oid:
-        next_data = list(
-            mark_dict_collection.find({"humanCheck": False})
-            .sort("_id", 1)
-            .skip(1)
-            .limit(1)
-        )[0]
+        next_data = list(mark_dict_collection.find({"humanCheck": False}).sort("_id", 1).skip(1).limit(1))[0]
     else:
-        next_data = mark_dict_collection.find_one(
-            {"_id": {"$gt": ObjectId(oid)}, "humanCheck": False}
-        )
+        next_data = mark_dict_collection.find_one({"_id": {"$gt": ObjectId(oid)}, "humanCheck": False})
     if next_data:
         return markdict_helper(next_data)
 

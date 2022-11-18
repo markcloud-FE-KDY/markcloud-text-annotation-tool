@@ -149,9 +149,7 @@ def kodexScoreConversion(korean_word):
         except:
             pass
 
-    for idx in range(
-        1, len(char_list)
-    ):  # Step 2. Remove same syllable from JONGSUNG-CHOSUNG continuum.
+    for idx in range(1, len(char_list)):  # Step 2. Remove same syllable from JONGSUNG-CHOSUNG continuum.
         try:
             if char_list[idx][1] == "*" and char_list[idx][0] == char_list[idx + 1]:
                 char_list.pop(idx)
@@ -162,9 +160,7 @@ def kodexScoreConversion(korean_word):
     for i, w in enumerate(char_list[1:]):
         try:
             if w in kodex_scores.keys():
-                code_list.append(
-                    kodex_scores[w]
-                )  # Step 4. Replace remaining syllables to Kodex scores
+                code_list.append(kodex_scores[w])  # Step 4. Replace remaining syllables to Kodex scores
 
         except Exception as e:
             print(e)
