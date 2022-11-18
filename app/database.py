@@ -30,27 +30,12 @@ def markdict_helper(markdict) -> dict:
     }
 
 
-def train():
-    ...
-    
-def test():
-    ...
-
-
-
 # Retrieve all markdicts(humanCheck:false) present in the database
 def retrieve_markdicts():
     markdicts = []
     for markdict in mark_dict_collection.find({"humanCheck": False}):
         markdicts.append(markdict_helper(markdict))
     return markdicts
-
-
-# Retrieve
-# def retrieve_markdict(productNameEng: str) -> dict:
-#     markdict = mark_dict_collection.find_one({"productNameEng": productNameEng})
-#     if markdict:
-#         return markdict_helper(markdict)
 
 
 def retrieve_markdict(oid: Optional[str] = None) -> dict:
