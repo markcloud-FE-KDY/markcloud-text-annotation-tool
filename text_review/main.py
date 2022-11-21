@@ -24,7 +24,7 @@ if __name__ == "__main__":
     # 주어진 날짜 구간 사이의 productNameEng 수집
     updated_data = get_updated_data(coll_brands_query, start_date, end_date)
     updated_data_list = [ud["productNameEng"] for ud in updated_data]
- 
+
     # productNameEng의 split, regex, lower처리
     processed_data = data_preprocess(updated_data_list)
     # (db) mark_dict 컬렉션에서 productNameEng 불러오기 (humanCheck true인 것만)
