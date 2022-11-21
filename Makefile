@@ -13,5 +13,5 @@ test:
 	find . -name '*.pyc'
 
 formatter:
-	black --line-length 119 app text-review
+	black --line-length 119 app text_review
 	

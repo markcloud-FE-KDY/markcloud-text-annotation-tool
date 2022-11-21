@@ -16,5 +16,5 @@ def get_engtokor(pretrained_model_path, diff_result: list):
     return diff_result, model_result
 
 
-if __name__=="__main__":
+if __name__ == "__main__":
     print(get_engtokor("./best_model", ["tabox", "ta2box"]))
