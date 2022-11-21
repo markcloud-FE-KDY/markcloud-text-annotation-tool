@@ -5,11 +5,13 @@ from marksearch import marksearch
 import argparse
 import csv
 from kodex import *
-
+import os
+import sys
 
 parser = argparse.ArgumentParser(description="date 입력")
 parser.add_argument("-d", "--date", default="")
 args = parser.parse_args()
+print(os.getcwd())
 
 pretrained_model_path = "../best_model"
 
@@ -21,21 +23,23 @@ if __name__ == "__main__":
 
     # 주어진 날짜 구간 사이의 productNameEng 수집
     updated_data = get_updated_data(coll_brands_query, start_date, end_date)
-    updated_data_list = []
-    for ud in updated_data:
-        updated_data_list.append(ud["productNameEng"])
-
+    updated_data_list = [ud["productNameEng"] for ud in updated_data]
+ 
     # productNameEng의 split, regex, lower처리
-    processed_data = data_preprocess(updated_data)
+    processed_data = data_preprocess(updated_data_list)
     # (db) mark_dict 컬렉션에서 productNameEng 불러오기 (humanCheck true인 것만)
     coll_mark_dict = get_collection("text_review", "mark_dict")
     src_eng = get_markdict_eng(coll_mark_dict)
 
     # mark_dict에 없는 값만 (차집합)
     diff_result = get_difference(processed_data, src_eng)
+    
+    diff_result = ["a", "b", "im"]
 
     # model돌려서 model_result 얻기
     productNameEngList, modelResultList = get_engtokor(pretrained_model_path, diff_result)
+    print(productNameEngList)
+    print(modelResultList)
 
     hc_true = []
     hc_false = []
