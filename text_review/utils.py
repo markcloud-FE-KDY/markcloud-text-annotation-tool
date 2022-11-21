@@ -30,7 +30,7 @@ def data_preprocess(updated_data):
     tmp = []
 
     for ud in updated_data:
-        words = ud["productNameEng"].lower().split(" ")
+        words = ud.lower().split(" ")
         for word in words:
             word2 = re.sub("[^a-zA-Z]", "", word)
             if word2:
