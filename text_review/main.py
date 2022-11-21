@@ -33,13 +33,8 @@ if __name__ == "__main__":
 
     # mark_dict에 없는 값만 (차집합)
     diff_result = get_difference(processed_data, src_eng)
-    
-    diff_result = ["a", "b", "im"]
-
     # model돌려서 model_result 얻기
     productNameEngList, modelResultList = get_engtokor(pretrained_model_path, diff_result)
-    print(productNameEngList)
-    print(modelResultList)
 
     hc_true = []
     hc_false = []
