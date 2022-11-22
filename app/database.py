@@ -31,11 +31,13 @@ def markdict_helper(markdict) -> dict:
 
 
 # Retrieve all markdicts(humanCheck:false) present in the database
-def retrieve_markdicts():
+def retrieve_markdict_list(skip: int = 0, limit: int = 20):
     markdicts = []
-    for markdict in mark_dict_collection.find({"humanCheck": False}):
+    total = mark_dict_collection.count_documents({})
+    markdict_list = list(mark_dict_collection.find().sort("_id", 1).skip(skip).limit(limit))
+    for markdict in markdict_list:
         markdicts.append(markdict_helper(markdict))
-    return markdicts
+    return total, markdicts
 
 
 def retrieve_markdict(oid: Optional[str] = None) -> dict:
@@ -51,7 +53,7 @@ def retrieve_previous(oid: Optional[str] = None) -> dict:
     if not oid:
         return None
     previous_data = list(
-        mark_dict_collection.find({"_id": {"$lt": ObjectId(oid)}, "humanCheck": False}).sort("_id", -1).limit(1)
+        # mark_dict_collection.find({"_id": {"$lt": ObjectId(oid)}, "humanCheck": False}).sort("_id", -1).limit(1)
     )
     if previous_data:
         return markdict_helper(previous_data[0])
@@ -90,8 +92,8 @@ def add_previousResult(oid: str, previousResult: str):
     )
 
 
-def save_checklist(productNameEng: str, data: dict):
-    with open("result_txt/humancheck.csv", "a", encoding="utf-8-sig") as f:
-        wr = csv.writer(f)
-        dt = datetime.today().strftime("%Y%m%d")
-        wr.writerow([dt, productNameEng, data["modelResult"]])
+# def save_checklist(productNameEng: str, data: dict):
+#     with open("result_txt/humancheck.csv", "a", encoding="utf-8-sig") as f:
+#         wr = csv.writer(f)
+#         dt = datetime.today().strftime("%Y%m%d")
+#         wr.writerow([dt, productNameEng, data["modelResult"]])

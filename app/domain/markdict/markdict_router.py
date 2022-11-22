@@ -9,6 +9,15 @@ from typing import Optional
 router = APIRouter()
 
 
+@router.get("/list")
+def markdict_list(page: int = 0, size: int = 20, ):
+    total, _markdict_list = retrieve_markdict_list(skip=page*size, limit=size)
+    return {
+        'total': total,
+        'markdict_list': _markdict_list
+    }
+
+
 @router.get("/")
 def get_markdict_data(oid: Optional[str] = None):
     markdict = retrieve_markdict(oid)
@@ -35,4 +44,5 @@ def update_markdict_data(oid: str, req: UpdateMarkDictModel = Body(...)):
     update_modelResult(oid, req)
     add_previousResult(oid, previousResult)
     update_humanCheck(oid)
-    save_checklist(markdict["productNameEng"], req)
+    # save_checklist(markdict["productNameEng"], req)
+    
