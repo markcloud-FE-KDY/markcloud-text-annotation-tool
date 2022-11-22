@@ -45,19 +45,17 @@
     def data_preprocess(updated_data):
         print("> data_preprocess...")
         tmp = []
-    
-        for i in updated_data:
-            pNE = i["productNameEng"]
-            words = list(map(str, pNE.split(" ")))
+
+        for ud in updated_data:
+            words = ud.lower().split(" ")
             for word in words:
                 word2 = re.sub("[^a-zA-Z]", "", word)
                 if word2:
-                    word3 = word2.lower()
-                    tmp.append(word3)
+                    tmp.append(word2)
 
-        processed_data = list(dict.frokeys(tmp))
+        processed_data = list(dict.fromkeys(tmp))
 
-        return processed_d
+        return processed_data
     ```
 
 <br>
@@ -66,7 +64,7 @@
 
     ```python
     def get_difference(processed_data, source_eng):
-        print("> get_difference...")  #
+        print("> get_difference...")
         res = Counter(processed_data) - Counter(source_eng)
         diff_result = list(res.keys())
 
@@ -103,13 +101,13 @@
 1. 현재 db에 있는 `humanCheck=false`인 `mark_dict` 중에서 `_id`가 가장 작은 데이터를 불러온다.
 
    ```python
-   def retrieve_markdict(id: Optional[str] = None) -> dict:
-       if not id:
+   def retrieve_markdict(oid: Optional[str] = None) -> dict:
+       if not oid:
            markdict = list(
                mark_dict_collection.find({"humanCheck": False}).sort("_id", 1).limit(1)
            )[0]
        else:
-           markdict = mark_dict_collection.find_one({"_id": ObjectId(id)})
+           markdict = mark_dict_collection.find_one({"_id": ObjectId(oid)})
        if markdict:
            return markdict_helper(markdict)
    ```
@@ -126,10 +124,10 @@
    1. 기존의 `modelResult`는 `previousResult` 컬럼에 저장된다.
 
       ```python
-      def add_previousResult(id: str, previousResult: str):
-          id = ObjectId(id)
+      def add_previousResult(oid: str, previousResult: str):
+          oid = ObjectId(oid)
           mark_dict_collection.update_one(
-              {"_id": id},
+              {"_id": oid},
               {"$set": {"previousResult": previousResult}},
           )
       ```
@@ -137,12 +135,12 @@
    2. `modelResult`는 1-2에서 선택한 것으로 업데이트된다.
 
       ```python
-      def update_modelResult(id: str, data: dict):
+      def update_modelResult(oid: str, data: dict):
           if len(data) < 1:
               return False
-          id = ObjectId(id)
+          oid = ObjectId(oid)
           mark_dict_collection.update_one(
-              {"_id": id},
+              {"_id": oid},
               {"$set": data},
           )
       ```
@@ -150,19 +148,19 @@
    3. `humanCheck`가 true로 업데이트된다.
 
       ```python
-      def update_humanCheck(id: str):
-          id = ObjectId(id)
-          mark_dict_collection.update_one({"_id": id}, {"$set": {"humanCheck": True}})
+      def update_humanCheck(oid: str):
+          oid = ObjectId(oid)
+          mark_dict_collection.update_one({"_id": oid}, {"$set": {"humanCheck": True}})
       ```
 
 4. `retrieve_previous`  현재 `ObjectId`보다 작은 `ObjectId` 중에서 가장 큰 값을 가져온다.
 
    ```python
-   def retrieve_previous(id: Optional[str] = None) -> dict:
-       if not id:
+   def retrieve_previous(oid: Optional[str] = None) -> dict:
+       if not oid:
            return None
        previous = list(
-           mark_dict_collection.find({"_id": {"$lt": ObjectId(id)}, "humanCheck": False})
+           mark_dict_collection.find({"_id": {"$lt": ObjectId(oid)}, "humanCheck": False})
            .sort("_id", -1)
            .limit(1)
        )
@@ -173,8 +171,8 @@
 5. `retrieve_next`  현재 `ObjectId`보다 큰 `ObjectId` 중에서 가장 작은 값을 가져온다.
 
    ```python
-   def retrieve_next(id: Optional[str] = None) -> dict:
-       if not id:
+   def retrieve_next(oid: Optional[str] = None) -> dict:
+       if not oid:
            next = list(
                mark_dict_collection.find({"humanCheck": False})
                .sort("_id", 1)
@@ -183,7 +181,7 @@
            )[0]
        else:
            next = mark_dict_collection.find_one(
-               {"_id": {"$gt": ObjectId(id)}, "humanCheck": False}
+               {"_id": {"$gt": ObjectId(oid)}, "humanCheck": False}
            )
        if next:
            return markdict_helper(next)
