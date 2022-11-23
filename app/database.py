@@ -30,21 +30,19 @@ def markdict_helper(markdict) -> dict:
     }
 
 
-def retrieve_markdict_list(skip: int = 0, limit: int = 20, tf: int = 0, keyword: str = ''):
+def retrieve_markdict_list(skip: int = 0, limit: int = 20, tf: int = 0, keyword: str = ""):
     markdicts = []
-    reg = re.compile(r'[a-zA-Z]')
-    rgx = re.compile(f'.*{keyword}.*', re.IGNORECASE)
+    reg = re.compile(r"[a-zA-Z]")
+    rgx = re.compile(f".*{keyword}.*", re.IGNORECASE)
     if reg.match(keyword):
-        filter_keyword = {"productNameEng":rgx}
+        filter_keyword = {"productNameEng": rgx}
     else:
-        filter_keyword = {"modelResult":rgx}
-    filter_tf = {
-        0: {"humanCheck":False},
-        1: {"humanCheck":True},
-        2: {}
-    }
-    total = mark_dict_collection.count_documents({"$and":[filter_keyword, filter_tf[tf]]})
-    markdict_list = list(mark_dict_collection.find({"$and":[filter_keyword, filter_tf[tf]]}).sort("_id", 1).skip(skip).limit(limit))
+        filter_keyword = {"modelResult": rgx}
+    filter_tf = {0: {"humanCheck": False}, 1: {"humanCheck": True}, 2: {}}
+    total = mark_dict_collection.count_documents({"$and": [filter_keyword, filter_tf[tf]]})
+    markdict_list = list(
+        mark_dict_collection.find({"$and": [filter_keyword, filter_tf[tf]]}).sort("_id", 1).skip(skip).limit(limit)
+    )
     for markdict in markdict_list:
         markdicts.append(markdict_helper(markdict))
     return total, markdicts
@@ -66,7 +64,7 @@ def retrieve_previous(oid: Optional[str] = None) -> dict:
         mark_dict_collection.find({"_id": {"$lt": ObjectId(oid)}, "humanCheck": False}).sort("_id", -1).limit(1)
     )
     if previous_data:
-        return markdict_helper(previous_data[0])
+        return str(previous_data[0]["_id"])
 
 
 def retrieve_next(oid: Optional[str] = None) -> dict:
@@ -75,7 +73,7 @@ def retrieve_next(oid: Optional[str] = None) -> dict:
     else:
         next_data = mark_dict_collection.find_one({"_id": {"$gt": ObjectId(oid)}, "humanCheck": False})
     if next_data:
-        return markdict_helper(next_data)
+        return str(next_data["_id"])
 
 
 # Update
@@ -104,7 +102,4 @@ def add_previousResult(oid: str, previousResult: str):
 
 def add_date_modified(oid: str):
     oid = ObjectId(oid)
-    mark_dict_collection.update_one(
-        {"_id": oid},
-        {"$set": {"date_modified": int(time.time())}}
-    )
+    mark_dict_collection.update_one({"_id": oid}, {"$set": {"date_modified": int(time.time())}})

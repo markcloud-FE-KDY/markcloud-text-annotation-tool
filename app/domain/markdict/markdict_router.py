@@ -11,16 +11,11 @@ router = APIRouter()
 
 
 @router.get("/list")
-def markdict_list(page: int = 0, size: int = 20, tf: int = 0, keyword: str = ''):
-    total, _markdict_list = retrieve_markdict_list(skip=page*size, limit=size, tf=tf, keyword=keyword)
+def markdict_list(page: int = 0, size: int = 20, tf: int = 0, keyword: str = ""):
+    total, _markdict_list = retrieve_markdict_list(skip=page * size, limit=size, tf=tf, keyword=keyword)
     return {
-        'meta': {
-            'total': total,
-            'page': page,
-            'limit': size,
-            'page_count': math.ceil(total/size)
-        },
-        'data': _markdict_list
+        "meta": {"total": total, "page": page, "limit": size, "page_count": math.ceil(total / size)},
+        "data": _markdict_list,
     }
 
 
@@ -50,4 +45,3 @@ def update_markdict_data(oid: str, req: UpdateMarkDictModel = Body(...)):
     add_previousResult(oid, previousResult)
     update_humanCheck(oid)
     add_date_modified(oid)
-    
