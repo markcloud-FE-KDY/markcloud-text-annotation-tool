@@ -14,13 +14,13 @@ router = APIRouter()
 def markdict_list(page: int = 0, size: int = 20, tf: int = 0, keyword: str = ''):
     total, _markdict_list = retrieve_markdict_list(skip=page*size, limit=size, tf=tf, keyword=keyword)
     return {
-        'metadata': {
+        'meta': {
             'total': total,
             'page': page,
             'limit': size,
             'page_count': math.ceil(total/size)
         },
-        'markdict_list': _markdict_list
+        'data': _markdict_list
     }
 
 
