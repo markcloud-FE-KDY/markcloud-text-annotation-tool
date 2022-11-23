@@ -1,11 +1,10 @@
 from pymongo import MongoClient
 import re
-import csv
-from datetime import datetime
 from bson.objectid import ObjectId
 from typing import Optional
 from dotenv import load_dotenv
 import os
+import time
 
 load_dotenv()
 MONGO_USER = os.environ["MONGO_USER"]
@@ -26,21 +25,32 @@ def markdict_helper(markdict) -> dict:
         "productNameEng": str(markdict["productNameEng"]),
         "modelResult": str(markdict["modelResult"]),
         "similarWords": re.findall(r"'(.*?)'", markdict["similarWords"]) if "similarWords" in markdict else "",
+        "originalEng": re.findall(r"'(.*?)'", markdict["originalEng"]) if "originalEng" in markdict else "",
         "humanCheck": bool(markdict["humanCheck"]),
     }
 
 
-# Retrieve all markdicts(humanCheck:false) present in the database
-def retrieve_markdicts():
+def retrieve_markdict_list(skip: int = 0, limit: int = 20, tf: int = 0, keyword: str = ""):
     markdicts = []
-    for markdict in mark_dict_collection.find({"humanCheck": False}):
+    reg = re.compile(r"[a-zA-Z]")
+    rgx = re.compile(f".*{keyword}.*", re.IGNORECASE)
+    if reg.match(keyword):
+        filter_keyword = {"productNameEng": rgx}
+    else:
+        filter_keyword = {"modelResult": rgx}
+    filter_tf = {0: {"humanCheck": False}, 1: {"humanCheck": True}, 2: {}}
+    total = mark_dict_collection.count_documents({"$and": [filter_keyword, filter_tf[tf]]})
+    markdict_list = list(
+        mark_dict_collection.find({"$and": [filter_keyword, filter_tf[tf]]}).sort("_id", 1).skip(skip).limit(limit)
+    )
+    for markdict in markdict_list:
         markdicts.append(markdict_helper(markdict))
-    return markdicts
+    return total, markdicts
 
 
 def retrieve_markdict(oid: Optional[str] = None) -> dict:
     if not oid:
-        markdict = list(mark_dict_collection.find({"humanCheck": False}).sort("_id", 1).limit(1))[0]
+        markdict = list(mark_dict_collection.find().sort("_id", 1).limit(1))[0]
     else:
         markdict = mark_dict_collection.find_one({"_id": ObjectId(oid)})
     if markdict:
@@ -54,7 +64,7 @@ def retrieve_previous(oid: Optional[str] = None) -> dict:
         mark_dict_collection.find({"_id": {"$lt": ObjectId(oid)}, "humanCheck": False}).sort("_id", -1).limit(1)
     )
     if previous_data:
-        return markdict_helper(previous_data[0])
+        return str(previous_data[0]["_id"])
 
 
 def retrieve_next(oid: Optional[str] = None) -> dict:
@@ -63,7 +73,7 @@ def retrieve_next(oid: Optional[str] = None) -> dict:
     else:
         next_data = mark_dict_collection.find_one({"_id": {"$gt": ObjectId(oid)}, "humanCheck": False})
     if next_data:
-        return markdict_helper(next_data)
+        return str(next_data["_id"])
 
 
 # Update
@@ -90,8 +100,6 @@ def add_previousResult(oid: str, previousResult: str):
     )
 
 
-def save_checklist(productNameEng: str, data: dict):
-    with open("result_txt/humancheck.csv", "a", encoding="utf-8-sig") as f:
-        wr = csv.writer(f)
-        dt = datetime.today().strftime("%Y%m%d")
-        wr.writerow([dt, productNameEng, data["modelResult"]])
+def add_date_modified(oid: str):
+    oid = ObjectId(oid)
+    mark_dict_collection.update_one({"_id": oid}, {"$set": {"date_modified": int(time.time())}})

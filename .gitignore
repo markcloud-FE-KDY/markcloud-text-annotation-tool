@@ -3,3 +3,4 @@ __pycache__/
 .env
 best_model/
 result_txt/
+data/db/

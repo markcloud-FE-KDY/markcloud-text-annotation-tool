@@ -5,8 +5,18 @@ from app.database import *
 from app.models import UpdateMarkDictModel
 
 from typing import Optional
+import math
 
 router = APIRouter()
+
+
+@router.get("/list")
+def markdict_list(page: int = 0, size: int = 20, tf: int = 0, keyword: str = ""):
+    total, _markdict_list = retrieve_markdict_list(skip=page * size, limit=size, tf=tf, keyword=keyword)
+    return {
+        "meta": {"total": total, "page": page, "limit": size, "page_count": math.ceil(total / size)},
+        "data": _markdict_list,
+    }
 
 
 @router.get("/")
@@ -16,12 +26,11 @@ def get_markdict_data(oid: Optional[str] = None):
     if not markdict:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
 
-    response = {
+    return {
         "previous": retrieve_previous(oid),
         "current": markdict,
         "next": retrieve_next(oid),
     }
-    return response
 
 
 @router.post("/update")
@@ -35,4 +44,4 @@ def update_markdict_data(oid: str, req: UpdateMarkDictModel = Body(...)):
     update_modelResult(oid, req)
     add_previousResult(oid, previousResult)
     update_humanCheck(oid)
-    save_checklist(markdict["productNameEng"], req)
+    add_date_modified(oid)
