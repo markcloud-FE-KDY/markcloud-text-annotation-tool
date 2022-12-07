@@ -1,0 +1,88 @@
+//---------------컬러 변수 정리---------------
+//배경색,텍스트 및 선 컬러
+$mainColor: #8566ff;
+$subColor: #aa94ff;
+$black: #15171a;
+$darkBg: #2c2c2c;
+$gray01: #333333;
+$gray02: #858585;
+$gray03: #cdcdcd;
+$gray04: #dddddd;
+$gray05: #f5f5f5;
+$red: #f74848;
+
+//---------------폰트 변수 정리---------------
+$blackFont: 'NotoSansBlack', '맑은 고딕', sans-serif;
+$boldFont: 'NotoSansB', '맑은 고딕', sans-serif;
+$middleFont: 'NotoSansM', '맑은 고딕', sans-serif;
+$regularFont: 'NotoSansR', '맑은 고딕', sans-serif;
+$thinFont: 'NotoSansT', '맑은 고딕', sans-serif;
+
+//---------------position style mixin---------------
+@mixin position-style(
+  $position: absolute,
+  $top: null,
+  $right: null,
+  $bottom: null,
+  $left: null,
+  $zIndex: null
+) {
+  position: $position;
+  top: $top;
+  right: $right;
+  bottom: $bottom;
+  left: $left;
+  z-index: $zIndex;
+}
+
+//---------------display flex style mixin---------------
+@mixin flex-style(
+  $flexDirection: row,
+  $alignVal: center,
+  $justifyVal: center,
+  $flexWrap: null,
+  $flex: null
+) {
+  display: flex;
+  flex-direction: $flexDirection;
+  align-items: $alignVal;
+  justify-content: $justifyVal;
+}
+
+//---------------분기점 변수 정리---------------
+$breakpoint-wide-tablet: 1180px; //태블릿 가로
+$breakpoint-tablet: 820px; //태블릿 세로
+$breakpoint-mobile: 480px; //모바일
+
+//--------------미디어쿼리 관련 정리---------------
+//태블릿 가로
+@mixin wide-tablet {
+  @media screen and (max-width: $breakpoint-wide-tablet) {
+    @content;
+  }
+}
+//태블릿 세로
+@mixin tablet {
+  @media screen and (max-width: $breakpoint-tablet) {
+    @content;
+  }
+}
+//모바일
+@mixin mobile {
+  @media screen and (max-width: $breakpoint-mobile) {
+    @content;
+  }
+}
+
+.desktop-none {
+  display: none;
+}
+.tablet-only {
+  display: none;
+}
+.wide-tablet-only {
+  display: none;
+}
+.mobile-only {
+  display: none;
+}

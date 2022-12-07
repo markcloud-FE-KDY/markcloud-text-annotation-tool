@@ -1,0 +1,982 @@
+@import './style';
+
+.column {
+  @include flex-style(column);
+}
+
+.row {
+  @include flex-style();
+}
+
+input {
+  background-color: transparent;
+}
+
+.container {
+  @include flex-style(column);
+  position: relative;
+  max-width: 100vw;
+  min-height: 100vh;
+  background-color: white;
+  transition: all 0.3s;
+  &.dark {
+    transition: all 0.3s;
+    background-color: $darkBg;
+    color: white;
+    select {
+      color: white;
+      background-color: $darkBg !important;
+    }
+    input {
+      color: white;
+    }
+    button {
+      color: white;
+      &.logout {
+        border-color: $darkBg !important;
+      }
+    }
+    .pagination {
+      .block {
+        > svg > polyline {
+          stroke: $gray02 !important;
+        }
+      }
+      .active {
+        > svg > polyline {
+          stroke: white !important;
+        }
+      }
+    }
+    .modal {
+      background-color: $darkBg !important;
+      .react-calendar {
+        background-color: $darkBg;
+      }
+      .react-calendar__navigation button:enabled:hover,
+      .react-calendar__tile:enabled:hover {
+        background-color: rgba($color: $subColor, $alpha: 0.3) !important;
+      }
+      .react-calendar__tile--now {
+        color: $gray03 !important;
+        &.react-calendar__tile--active {
+          color: white !important;
+        }
+      }
+    }
+    input.complete {
+      background-color: $gray01 !important;
+    }
+    .word {
+      > div {
+        background-color: $darkBg !important;
+      }
+      &:last-child {
+        > div {
+          background-color: $mainColor !important;
+        }
+      }
+    }
+    .similarWords {
+      background-color: transparent !important;
+      .row {
+        div {
+          background-color: transparent !important;
+        }
+      }
+    }
+  }
+  .content-wrap {
+    @include flex-style(column);
+    width: 70%;
+    padding: 70px 0;
+    &.sign-in {
+      .header {
+        text-align: center;
+        line-height: 70px;
+        h1 {
+          color: $mainColor;
+          font-size: 100px;
+          font-family: $blackFont;
+          &:last-child {
+            color: white;
+            -webkit-text-stroke: 2px $mainColor;
+          }
+        }
+      }
+      .loginForm {
+        margin-top: 50px;
+        @include flex-style(column);
+        border: 4px solid $mainColor;
+        width: 30%;
+        height: 300px;
+        input {
+          border: 2px solid $mainColor;
+          padding: 10px;
+          width: 80%;
+          font-size: 16px;
+          border-radius: 8px;
+          transition: all 0.2s;
+          &:nth-child(2) {
+            margin-top: 10px;
+          }
+          &:focus {
+            transition: all 0.2s;
+            background-color: $subColor;
+            color: white;
+            border: 2px solid $subColor;
+            &::placeholder {
+              color: white;
+            }
+          }
+        }
+        button {
+          margin-top: 30px;
+          background-color: $mainColor;
+          width: 50%;
+          padding: 10px;
+          border-radius: 10px;
+          color: white;
+          font-family: $blackFont;
+          font-size: 20px;
+          transition: all 0.2s;
+          &:hover {
+            background-color: $mainColor;
+            transition: all 0.2s;
+          }
+        }
+      }
+    }
+    &.home {
+      .header {
+        @include flex-style($justifyVal: space-between);
+        width: 100%;
+        .title {
+          cursor: pointer;
+          text-align: center;
+          line-height: 36px;
+          h1 {
+            font-size: 60px;
+            font-family: $blackFont;
+            color: $mainColor;
+            &:last-child {
+              color: white;
+              -webkit-text-stroke: 1px $mainColor;
+            }
+          }
+        }
+        .menu {
+          @include flex-style();
+          .firstSelect {
+            border-top-left-radius: 8px;
+            border-bottom-left-radius: 8px;
+            border-right: none;
+          }
+          select {
+            height: 50px;
+            padding: 0 10px;
+            font-size: 16px;
+            background-color: transparent;
+            border: 2px solid $mainColor;
+          }
+          button {
+            width: 50px;
+            height: 50px;
+            background-color: $mainColor;
+            font-size: 40px;
+            color: white;
+            &.logout {
+              border-top-right-radius: 8px;
+              border-bottom-right-radius: 8px;
+              width: auto;
+              font-size: 16px;
+              font-family: $boldFont;
+              padding: 0 10px;
+              border-left: 2px solid white;
+            }
+          }
+          .search {
+            @include flex-style();
+            margin-right: 30px;
+            span {
+              @include flex-style();
+              &:first-child {
+                padding: 6px 10px;
+                color: white;
+                font-family: $boldFont;
+                background-color: $mainColor;
+                border-top-left-radius: 8px;
+                border-bottom-left-radius: 8px;
+              }
+              &:last-child {
+                font-family: $middleFont;
+                padding: 5px 10px;
+                background-color: transparent;
+                border: 1px solid $mainColor;
+                border-top-right-radius: 8px;
+                border-bottom-right-radius: 8px;
+                svg {
+                  cursor: pointer;
+                  margin-left: 10px;
+                  color: $mainColor;
+                }
+              }
+            }
+          }
+        }
+      }
+      .totalCount {
+        width: 100%;
+        margin-top: 10px;
+        text-align: right;
+        > span {
+          display: inline-block;
+          &:nth-child(2) {
+            margin-left: 5px;
+            font-family: $boldFont;
+          }
+        }
+      }
+      .content {
+        @include flex-style(column);
+        margin-top: 5px;
+        width: 100%;
+        border: 3px solid $mainColor;
+        .table-wrap {
+          width: 100%;
+          background-color: transparent;
+          table {
+            width: 100%;
+            text-align: center;
+            border-collapse: collapse;
+            thead {
+              background-color: $mainColor;
+              color: white;
+              height: 50px;
+              > tr > th {
+                font-family: $boldFont;
+              }
+            }
+            .odd {
+              td {
+                background-color: rgba($color: $subColor, $alpha: 0.1);
+              }
+            }
+            td {
+              padding: 10px;
+              border-bottom: 1px solid rgba($color: $mainColor, $alpha: 0.2);
+              &.complete {
+                color: $mainColor;
+              }
+              &.inComplete,
+              &.pass {
+                color: $gray02;
+              }
+            }
+            thead > tr {
+              cursor: default;
+            }
+            tr {
+              cursor: pointer;
+              &:hover {
+                td {
+                  color: $subColor;
+                }
+              }
+            }
+          }
+        }
+        .none-list {
+          @include flex-style();
+          height: 500px;
+        }
+      }
+    }
+    &.inspect {
+      @include flex-style(column);
+      padding: 30px 0;
+      min-height: 100vh;
+      .icons {
+        margin-top: 30px;
+        width: 100%;
+        font-size: 40px;
+        color: $mainColor;
+        cursor: pointer;
+        > svg {
+          position: absolute;
+          bottom: 50%;
+          &.prev {
+            left: 200px;
+          }
+          &.next {
+            right: 200px;
+          }
+        }
+        > div {
+          position: absolute;
+          top: 50px;
+          font-size: 40px;
+          cursor: default;
+          button {
+            margin-top: 10px;
+            cursor: pointer;
+            background-color: $mainColor;
+            color: white;
+            padding: 15px 30px;
+            font-size: 16px;
+            font-family: $boldFont;
+            border-radius: 8px;
+          }
+        }
+      }
+      .wordStep {
+        margin-top: 100px;
+        width: 40%;
+        position: relative;
+        justify-content: space-between;
+        &.viewResult {
+          width: 60%;
+        }
+        .connect-word {
+          position: absolute;
+          width: 100%;
+          border-bottom: 2px dashed $mainColor;
+          transform: translateY(20px);
+          height: 1px;
+          z-index: 0;
+        }
+        .word {
+          @include flex-style(column);
+          z-index: 1;
+          > span {
+            margin-bottom: 10px;
+            font-size: 20px;
+            font-family: $middleFont;
+          }
+          > div {
+            @include flex-style();
+            min-width: 130px;
+            background-color: white;
+            font-family: $boldFont;
+            border-radius: 100px;
+            padding: 30px;
+            border: 3px solid $mainColor;
+            &.originalList {
+              width: 200px;
+              max-height: 300px;
+              border-radius: 8px;
+              padding: 0;
+              > ul {
+                height: 100%;
+                overflow-y: auto;
+                width: 100%;
+                li {
+                  text-align: center;
+                  width: 100%;
+                  border-bottom: 1px solid $mainColor;
+                  padding: 10px 0;
+                  &:last-child {
+                    border: none;
+                  }
+                }
+              }
+            }
+          }
+          &:last-child {
+            > div {
+              margin-right: 0;
+              background-color: $mainColor;
+              color: white;
+            }
+          }
+        }
+      }
+      > hr {
+        width: 70%;
+        margin: 60px 0;
+        border-color: $gray05;
+      }
+      .checkStatus {
+        font-size: 20px;
+        font-family: $boldFont;
+      }
+      .similarWordsGuide {
+        font-size: 20px;
+        font-family: $middleFont;
+        margin-bottom: 5px;
+      }
+      .similarWords {
+        background-color: $gray05;
+        padding: 20px;
+        border-radius: 30px;
+        border: dashed 1px $gray03;
+        .row {
+          div {
+            font-size: 13px;
+            position: relative;
+            cursor: pointer;
+            background-color: white;
+            padding: 20px;
+            width: 200px;
+            text-align: center;
+            border: 2px solid $mainColor;
+            border-radius: 50px;
+            margin-right: 20px;
+            &:last-child {
+              margin-right: 0;
+            }
+            &.active {
+              background-color: $mainColor !important;
+              color: white;
+              font-family: $boldFont;
+            }
+          }
+          &.second {
+            margin-top: 20px;
+          }
+        }
+      }
+      > input {
+        border: 2px solid $mainColor;
+        margin-top: 50px;
+        padding: 10px 20px;
+        font-size: 16px;
+        width: 300px;
+        border-radius: 8px;
+        &.complete {
+          background-color: $gray05;
+          cursor: default;
+        }
+      }
+      > p {
+        width: 300px;
+        text-align: right;
+        font-size: 13px;
+        &::before {
+          content: '*';
+          color: red;
+        }
+      }
+      .btnWrap {
+        button {
+          font-size: 16px;
+          border: 2px solid $mainColor;
+          padding: 15px;
+          width: 300px;
+          border-radius: 8px;
+          font-family: $boldFont;
+          &:last-child {
+            color: white;
+            background-color: $mainColor;
+            margin-left: 20px;
+          }
+        }
+      }
+    }
+  }
+  .modal-wrap {
+    @include position-style(fixed, 0, 0);
+    @include flex-style(column);
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba($color: black, $alpha: 0.2);
+    .modal {
+      @include flex-style(column);
+      position: relative;
+      background-color: white;
+      width: 70%;
+      height: 700px;
+      border: 2px solid $mainColor;
+      border-radius: 10px;
+      > span {
+        @include position-style($right: 10px, $top: 10px);
+        font-size: 30px;
+        color: $mainColor;
+        > svg {
+          cursor: pointer;
+        }
+      }
+      > ul {
+        @include flex-style();
+        border: 1px solid $gray04;
+        border-radius: 8px;
+        li {
+          cursor: pointer;
+          text-align: center;
+          padding: 10px 15px;
+          border-right: 1px solid $gray04;
+          &:first-child {
+            border-top-left-radius: 8px;
+            border-bottom-left-radius: 8px;
+          }
+          &:last-child {
+            border-top-right-radius: 8px;
+            border-bottom-right-radius: 8px;
+            border-right: none;
+          }
+          &.active {
+            background-color: $mainColor;
+            color: white;
+            font-family: $boldFont;
+          }
+        }
+      }
+      .section {
+        @include flex-style(column);
+        border: 1px solid $gray04;
+        border-radius: 8px;
+        margin-top: 20px;
+        width: 85%;
+        min-height: 80%;
+        > button {
+          background-color: $mainColor;
+          padding: 10px 30px;
+          color: white;
+          font-size: 16px;
+          font-family: $boldFont;
+          margin-top: 30px;
+          transition: all 0.2s;
+          border-radius: 8px;
+          &:hover {
+            background-color: $subColor;
+            transition: all 0.2s;
+          }
+          &:active {
+            background-color: $mainColor;
+          }
+        }
+        &.calendar {
+          > div {
+            @include flex-style();
+            > span {
+              margin: 0 3%;
+            }
+            .react-calendar {
+              border-color: $subColor;
+              border-top-left-radius: 8px;
+              border-top-right-radius: 8px;
+              .react-calendar__tile--now {
+                background: rgba($color: $subColor, $alpha: 0.2);
+                color: $gray02;
+                &.react-calendar__tile--active {
+                  color: white;
+                }
+              }
+              .react-calendar__tile--active {
+                background: rgba($color: $mainColor, $alpha: 0.7);
+                &.react-calendar__month-view__days__day--weekend {
+                  color: white;
+                }
+              }
+              .react-calendar__month-view__days__day--weekend {
+                color: $gray02;
+              }
+              abbr[title] {
+                text-decoration: none;
+              }
+            }
+            input {
+              border: 1px solid $subColor;
+              width: 100%;
+              border-top: none;
+              background-color: $mainColor;
+              color: white;
+              font-family: $boldFont;
+              padding: 10px;
+              &:first-child {
+                border-right: none;
+                border-bottom-left-radius: 8px;
+              }
+              &:last-child {
+                border-left: none;
+                border-bottom-right-radius: 8px;
+              }
+            }
+            .selectTime {
+              padding: 15px 0;
+              border-left: 1px solid $subColor;
+              border-right: 1px solid $subColor;
+              select {
+                border: 1px solid $mainColor;
+                padding: 3px 10px;
+                border-radius: 5px;
+                &:first-child {
+                  margin-right: 15px;
+                }
+              }
+              span {
+                margin-left: 3px;
+                &.hour {
+                  margin-right: 5px;
+                }
+              }
+            }
+            > span {
+              font-family: $boldFont;
+              color: $mainColor;
+            }
+          }
+        }
+        &.text,
+        &.worker {
+          input {
+            font-size: 16px;
+            border: 1px solid $mainColor;
+            padding: 10px 15px;
+            width: 40%;
+            border-radius: 8px;
+          }
+        }
+      }
+    }
+  }
+}
+
+.paging {
+  align-items: center;
+  justify-content: center;
+  margin-top: 20px;
+  .pagination {
+    li {
+      @include flex-style();
+      font-family: $middleFont;
+      cursor: pointer;
+      min-width: 40px;
+      height: 40px;
+      padding: 7px 0;
+      user-select: none;
+      border: 1px solid rgb(215, 215, 215);
+      border-radius: 9px;
+      margin-right: 3px;
+      &:last-child {
+        margin-right: 20px;
+      }
+      &.now {
+        background-color: $mainColor;
+        color: white;
+        font-family: $boldFont;
+      }
+      &.prev,
+      &.next {
+        font-size: 20px;
+        border-radius: 50%;
+        &.block {
+          cursor: default;
+          > svg > polyline {
+            stroke: $gray04;
+          }
+        }
+      }
+    }
+  }
+  .pageInput {
+    > span {
+      margin-right: 10px;
+      > input {
+        border: 1px solid $mainColor;
+        border-radius: 8px;
+        padding: 10px;
+        width: 80px;
+        margin-right: 10px;
+      }
+    }
+    > button {
+      background-color: $mainColor;
+      color: white;
+      padding: 10px 15px;
+      border-radius: 8px;
+      font-family: $boldFont;
+    }
+  }
+}
+
+.hotkeyGuide {
+  @include position-style(fixed, $left: 20px, $bottom: 20px);
+  @include flex-style(column);
+  border: 2px solid $mainColor;
+  width: 20%;
+  padding: 20px 0;
+  border-radius: 10px;
+  &.close {
+    background-color: $mainColor;
+    color: white;
+    cursor: pointer;
+  }
+  .row {
+    justify-content: space-between;
+    &.head {
+      width: 90%;
+      > span {
+        font-size: 20px;
+        font-family: $blackFont;
+        border-bottom: 2px solid $mainColor;
+        p {
+          font-size: 20px;
+          font-family: $blackFont;
+          display: inline-block;
+        }
+      }
+      > div {
+        font-size: 30px;
+        cursor: pointer;
+        color: $mainColor;
+      }
+    }
+    &.keys {
+      width: 85%;
+      margin-top: 15px;
+      > div {
+        > span {
+          padding: 2px 10px;
+          background-color: $mainColor;
+          color: white;
+          border-radius: 8px;
+          font-family: $middleFont;
+        }
+        &:last-child {
+          border-bottom: 1px solid $mainColor;
+        }
+      }
+      > span {
+        font-family: $boldFont;
+        color: $gray02;
+      }
+    }
+  }
+}
+
+.mode {
+  @include position-style($top: 10px);
+  display: flex;
+  justify-content: flex-end;
+  width: 85%;
+  height: 40px;
+  .tgl {
+    opacity: 0;
+    + .tgl-btn {
+      cursor: pointer;
+      padding: 2px;
+      transition: all 0.2s ease;
+      font-family: sans-serif;
+      perspective: 100px;
+      &:after,
+      &:before {
+        display: inline-block;
+        transition: all 0.4s ease;
+        text-align: center;
+        position: absolute;
+        line-height: 2em;
+        font-weight: bold;
+        color: #fff;
+        position: absolute;
+        top: 0;
+        left: 0;
+        backface-visibility: hidden;
+        border-radius: 4px;
+      }
+
+      &:after {
+        padding: 6.5px 11.5px;
+        content: attr(data-tg-on);
+        background-color: $mainColor;
+        color: white;
+        transform: rotateY(-180deg);
+      }
+
+      &:before {
+        padding: 5px 10px;
+        color: $mainColor;
+        border: 3px solid $mainColor;
+        content: attr(data-tg-off);
+      }
+
+      &:active:before {
+        transform: rotateY(-20deg);
+      }
+    }
+
+    &:checked + .tgl-btn {
+      &:before {
+        transform: rotateY(180deg);
+      }
+
+      &:after {
+        transform: rotateY(0);
+        left: 0;
+        background: $mainColor;
+      }
+
+      &:active:after {
+        transform: rotateY(20deg);
+      }
+    }
+  }
+}
+
+@include wide-tablet {
+  .desktop-none {
+    display: inline-block !important;
+  }
+  .wide-tablet-none {
+    display: none !important;
+  }
+  .content-wrap {
+    width: 90% !important;
+  }
+  .mode {
+    width: 80%;
+  }
+  .dark {
+    .hotkeyGuide {
+      background-color: $darkBg;
+    }
+  }
+  .modal {
+    width: 90% !important;
+    .section {
+      width: 90% !important;
+    }
+  }
+  .loginForm {
+    width: 70% !important;
+  }
+  .hotkeyGuide {
+    width: 220px;
+    background-color: white;
+    z-index: 2;
+    &.close {
+      width: 120px;
+      height: 120px;
+    }
+    .head > span {
+      font-size: 16px !important;
+    }
+    .keys {
+      flex-flow: column;
+      border-bottom: 1px solid $gray02;
+      > div {
+        &:last-child {
+          margin: 3px 0 10px;
+          border-bottom: none !important;
+        }
+      }
+    }
+  }
+}
+
+@include tablet {
+  .tablet-none {
+    display: none !important;
+  }
+  select {
+    font-size: 13px !important;
+  }
+  button {
+    font-size: 14px !important;
+    > svg {
+      font-size: 40px;
+    }
+  }
+  table {
+    td {
+      font-size: 12px;
+    }
+  }
+  .section {
+    > div {
+      > div {
+        &:first-child {
+          margin-left: 3%;
+        }
+        &:last-child {
+          margin-right: 3%;
+        }
+        .react-calendar {
+          width: 100%;
+        }
+      }
+    }
+  }
+  .paging {
+    .pagination {
+      > li {
+        font-size: 13px;
+        min-width: 30px;
+        height: 30px;
+      }
+    }
+    .pageInput {
+      span {
+        font-size: 12px;
+      }
+      button {
+        font-size: 13px;
+      }
+    }
+  }
+}
+
+@include mobile {
+  .mobile-none {
+    display: none !important;
+  }
+  .mode {
+    width: 60%;
+  }
+  .paging {
+    flex-direction: column;
+    .pagination {
+      margin-bottom: 10px;
+      li {
+        &:last-child {
+          margin-right: 0;
+        }
+      }
+    }
+  }
+  .sign-in {
+    .header {
+      line-height: 23px !important;
+      h1 {
+        font-size: 36px !important;
+        &:nth-child(2) {
+          -webkit-text-stroke: 1px $mainColor !important;
+        }
+      }
+    }
+    .loginForm {
+      width: 90% !important;
+    }
+  }
+  .home {
+    .header {
+      flex-direction: column !important;
+      .menu {
+        margin-top: 30px;
+        select {
+          font-size: 12px !important;
+        }
+        .logout {
+          font-size: 12px !important;
+        }
+      }
+    }
+  }
+  .inspect {
+    .wordStep {
+      margin-top: 30px !important;
+      flex-direction: column !important;
+      width: 90% !important;
+      .word {
+        margin-bottom: 30px;
+        &:last-child {
+          margin-bottom: 0;
+        }
+      }
+    }
+    hr {
+      width: 90% !important;
+      margin: 30px 0 !important;
+    }
+  }
+}
