@@ -64,12 +64,9 @@ def search_by_time(time_start: int, time_end: int):
 
 
 def form_search_option(m: MarkdictList):
-    filter_tf = {0: {"humanCheck": False}, 1: {"humanCheck": True}, 2:{"passCheck":True}, 3: {}}
+    filter_tf = {0: {"humanCheck": False}, 1: {"humanCheck": True}, 2: {"passCheck": True}, 3: {}}
     search_option = [filter_tf[m.tf]]
-    
-    # if m.pass_check:
-    #     search_option = [{"passCheck":True}]
-    
+
     if m.keyword:
         search_option.append(search_by_keyword(m.keyword))
     if m.worker:
