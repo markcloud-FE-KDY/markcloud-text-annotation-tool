@@ -62,6 +62,9 @@ input {
 .container.dark button.logout {
   border-color: #2c2c2c !important;
 }
+.container.dark .hotkeyGuide {
+  background-color: #2c2c2c !important;
+}
 .container.dark .pagination .block > svg > polyline {
   stroke: #858585 !important;
 }
@@ -93,10 +96,12 @@ input {
 .container.dark .word:last-child > div {
   background-color: #8566ff !important;
 }
-.container.dark .similarWords {
+.container.dark .similarWords,
+.container.dark .modelResults {
   background-color: transparent !important;
 }
-.container.dark .similarWords .row div {
+.container.dark .similarWords .row div,
+.container.dark .modelResults .row div {
   background-color: transparent !important;
 }
 .container .content-wrap {
@@ -337,6 +342,7 @@ input {
   cursor: pointer;
 }
 .container .content-wrap.inspect .icons > svg {
+  z-index: 2;
   position: absolute;
   bottom: 50%;
 }
@@ -437,18 +443,35 @@ input {
   font-size: 20px;
   font-family: "NotoSansB", "맑은 고딕", sans-serif;
 }
-.container .content-wrap.inspect .similarWordsGuide {
+.container .content-wrap.inspect .guideText {
   font-size: 20px;
   font-family: "NotoSansM", "맑은 고딕", sans-serif;
   margin-bottom: 5px;
 }
-.container .content-wrap.inspect .similarWords {
+.container .content-wrap.inspect .list {
+  max-width: 70%;
+  justify-content: space-between;
+}
+.container .content-wrap.inspect .list .modelResult {
+  margin-right: 70px;
+}
+.container .content-wrap.inspect .list .similarWords,
+.container .content-wrap.inspect .list .modelResults {
   background-color: #f5f5f5;
   padding: 20px;
   border-radius: 30px;
   border: dashed 1px #cdcdcd;
 }
-.container .content-wrap.inspect .similarWords .row div {
+.container .content-wrap.inspect .list .similarWords .directInputs,
+.container .content-wrap.inspect .list .modelResults .directInputs {
+  border-top: 1px solid white;
+}
+.container .content-wrap.inspect .list .similarWords .directInputs:first-child,
+.container .content-wrap.inspect .list .modelResults .directInputs:first-child {
+  border-top: none;
+}
+.container .content-wrap.inspect .list .similarWords .row div,
+.container .content-wrap.inspect .list .modelResults .row div {
   font-size: 13px;
   position: relative;
   cursor: pointer;
@@ -460,15 +483,18 @@ input {
   border-radius: 50px;
   margin-right: 20px;
 }
-.container .content-wrap.inspect .similarWords .row div:last-child {
+.container .content-wrap.inspect .list .similarWords .row div:last-child,
+.container .content-wrap.inspect .list .modelResults .row div:last-child {
   margin-right: 0;
 }
-.container .content-wrap.inspect .similarWords .row div.active {
+.container .content-wrap.inspect .list .similarWords .row div.active,
+.container .content-wrap.inspect .list .modelResults .row div.active {
   background-color: #8566ff !important;
   color: white;
   font-family: "NotoSansB", "맑은 고딕", sans-serif;
 }
-.container .content-wrap.inspect .similarWords .row.second {
+.container .content-wrap.inspect .list .similarWords .row.second,
+.container .content-wrap.inspect .list .modelResults .row.second {
   margin-top: 20px;
 }
 .container .content-wrap.inspect > input {
@@ -740,10 +766,12 @@ input {
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  background-color: white;
   border: 2px solid #8566ff;
   width: 20%;
   padding: 20px 0;
   border-radius: 10px;
+  z-index: 2;
 }
 .hotkeyGuide.close {
   background-color: #8566ff;
@@ -788,6 +816,27 @@ input {
 .hotkeyGuide .row.keys > span {
   font-family: "NotoSansB", "맑은 고딕", sans-serif;
   color: #858585;
+}
+.hotkeyGuide hr {
+  margin: 20px 0;
+  width: 100%;
+}
+.hotkeyGuide .inputGuide {
+  width: 95%;
+}
+.hotkeyGuide .inputGuide .highlight {
+  font-family: "NotoSansB", "맑은 고딕", sans-serif;
+  text-decoration: underline;
+}
+.hotkeyGuide .inputGuide p {
+  margin-bottom: 8px;
+}
+.hotkeyGuide .inputGuide p::before {
+  content: "*";
+  color: #8566ff;
+}
+.hotkeyGuide .inputGuide p:last-child {
+  margin-bottom: 0;
 }
 
 .mode {
@@ -862,9 +911,6 @@ input {
   }
   .mode {
     width: 80%;
-  }
-  .dark .hotkeyGuide {
-    background-color: #2c2c2c;
   }
   .modal {
     width: 90% !important;
