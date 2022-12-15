@@ -1,6 +1,5 @@
 from pymongo import MongoClient
 
-# import re
 from dotenv import load_dotenv
 import os
 from .domain.markdict.markdict_schema import *
@@ -16,5 +15,5 @@ MONGO_DETAILS = f"mongodb://{MONGO_USER}:{MONGO_PWD}@{MONGO_HOST}:{MONGO_PORT}"
 
 client = MongoClient(MONGO_DETAILS)
 database = client.text_review
-mark_dict_collection = database.get_collection("mark_dict")
+mark_dict_collection = database.get_collection("mark_dict_final")
 user_collection = database.get_collection("user")

@@ -58,11 +58,11 @@ const TextInspection = ({ mode, setMode }) => {
     let data;
     if (status === 'pass') {
       if (info?.passCheck) return console.log('pass');
-      data = { modelResult: '' };
+      data = { userInput: '' };
     } else {
       if (!input.length && !similar.length)
         return alert('유사 단어를 선택하거나 입력해 주세요.');
-      data = { modelResult: `${input.length ? input : similar}` };
+      data = { userInput: `${input.length ? input : similar}` };
     }
     const result = await modifyText(oid, status === 'pass', data);
     if (typeof result === 'object') {
@@ -112,7 +112,8 @@ const TextInspection = ({ mode, setMode }) => {
 
   useEffect(() => {
     if (input.includes('@')) $('input').blur();
-    const regExp = /[a-z0-9]|[ \[\]{}()<>?|`~!@#$%^&*-_+=,.;:\"'\\]/g;
+    const regExp =
+      /[a-z0-9]|[ /[\{\}\[\]\/?.;:|\)*~`!^\-_+<>@\#$%&\\\=\(\'\"]/g;
     if (regExp.test(input)) setInput(input.substring(0, input.length - 1));
   }, [input]);
 
@@ -201,93 +202,128 @@ const TextInspection = ({ mode, setMode }) => {
             <span>1차 가공 영어</span>
             <div>{info?.productNameEng}</div>
           </div>
-          {info?.humanCheck && (
-            <div className='word'>
-              <span>검수 결과</span>
-              <div>{info?.modelResult}</div>
-            </div>
-          )}
         </div>
         <hr />
-        {info?.humanCheck || info?.passCheck ? (
+        {info?.passCheck ? (
           <>
             <span className='checkStatus'>
-              {info?.humanCheck && '검수가 완료된 단어입니다.'}
               {info?.passCheck && '보류된 단어입니다.'}
             </span>
           </>
         ) : (
           <>
             {' '}
-            <span className='similarWordsGuide'>유사 단어 목록</span>
-            <div className='similarWords column'>
-              <div className='row'>
-                <div onClick={e => checkSimilar(e)} id={1}>
-                  {info?.modelResult}
+            <div className='row list'>
+              <div className='column modelResult'>
+                <span className='guideText'>
+                  {info?.humanCheck ? '검수 종류' : '모델 단어'}
+                </span>
+                <div className='modelResults'>
+                  {info?.humanCheck
+                    ? (info?.inputFilter === 'direct' && '직접') ||
+                      (info?.inputFilter === 'candidate' && '후보') ||
+                      (info?.inputFilter === 'model' && '모델')
+                    : info?.modelResult}
                 </div>
-                {Array(2)
-                  .fill(0)
-                  .map((i, idx) => {
-                    return (
-                      <>
-                        {info?.similarWords?.length >= idx + 1 &&
-                          !info?.humanCheck && (
-                            <div onClick={e => checkSimilar(e)} id={idx + 2}>
-                              {info?.similarWords[idx]}
-                            </div>
-                          )}
-                      </>
-                    );
-                  }, <></>)}
               </div>
-              {info?.similarWords?.length > 2 && !info?.humanCheck ? (
-                <div className='row second'>
-                  {Array(3)
-                    .fill(0)
-                    .map((i, idx) => {
-                      return (
-                        <>
-                          {info?.similarWords?.length >= idx + 3 && (
-                            <div onClick={e => checkSimilar(e)} id={idx + 4}>
-                              {info?.similarWords[idx + 2]}
-                            </div>
-                          )}
-                        </>
-                      );
-                    }, <></>)}
+              <div className='column'>
+                <span className='guideText'>
+                  {info?.humanCheck ? '검수 결과' : '후보 단어'}
+                </span>
+                <div className='similarWords column'>
+                  {info?.humanCheck
+                    ? info?.directInput?.length > 1
+                      ? info?.directInput?.reduce((acc, i) => {
+                          return (
+                            <>
+                              {acc}
+                              <span className='directInputs'>{i}</span>
+                            </>
+                          );
+                        }, <></>)
+                      : info?.directInput
+                    : !info?.similarWords?.length && '후보 단어가 없습니다.'}
+                  <div className='row'>
+                    {Array(3)
+                      .fill(0)
+                      .map((i, idx) => {
+                        return (
+                          <>
+                            {info?.similarWords?.length >= idx + 1 &&
+                              !info?.humanCheck && (
+                                <div
+                                  onClick={e => checkSimilar(e)}
+                                  id={idx + 1}>
+                                  {info?.similarWords[idx]}
+                                </div>
+                              )}
+                          </>
+                        );
+                      }, <></>)}
+                  </div>
+                  {info?.similarWords?.length > 3 && !info?.humanCheck ? (
+                    <div className='row second'>
+                      {Array(3)
+                        .fill(0)
+                        .map((i, idx) => {
+                          return (
+                            <>
+                              {info?.similarWords?.length >= idx + 4 && (
+                                <div
+                                  onClick={e => checkSimilar(e)}
+                                  id={idx + 4}>
+                                  {info?.similarWords[idx + 3]}
+                                </div>
+                              )}
+                            </>
+                          );
+                        }, <></>)}
+                    </div>
+                  ) : (
+                    ''
+                  )}
                 </div>
-              ) : (
-                ''
-              )}
+              </div>
             </div>
-            <input
-              type='text'
-              placeholder='직접 입력'
-              value={input}
-              onChange={e => {
-                if (similar.length) hotkeyCheck(0);
-                setInput(e.target.value);
-              }}
-              className={`${info?.humanCheck ? 'complete' : 'inComplete'}`}
-              readOnly={info?.humanCheck || info?.passCheck}
-              onKeyDown={e => enterFn(e, () => postResult('complete'))}
-            />
+            {info?.humanCheck || (
+              <input
+                type='text'
+                placeholder='직접 입력'
+                value={input}
+                onChange={e => {
+                  if (similar.length) hotkeyCheck(0);
+                  setInput(e.target.value);
+                }}
+                className={`${info?.humanCheck ? 'complete' : 'inComplete'}`}
+                readOnly={info?.humanCheck || info?.passCheck}
+                onKeyDown={e => enterFn(e, () => postResult('complete'))}
+              />
+            )}
             {info?.passCheck || info?.humanCheck || (
-              <p>한글만 입력 가능합니다.</p>
+              <p>한글과 콤마(,)만 입력 가능합니다.</p>
             )}
           </>
         )}
         <hr />
         <div className='btnWrap column'>
           {info?.humanCheck ? (
-            <>
+            <div className='row'>
+              {info?.worker === getCookie('userInfo') && (
+                <button
+                  onClick={() => changeState(setInfo, 'humanCheck', false)}>
+                  수정
+                </button>
+              )}
               <button onClick={() => changePage('next')}>다음</button>
-            </>
+            </div>
           ) : info?.passCheck ? (
             <div className='row'>
-              <button onClick={() => changeState(setInfo, 'passCheck', false)}>
-                수정
-              </button>
+              {info?.worker === getCookie('userInfo') && (
+                <button
+                  onClick={() => changeState(setInfo, 'passCheck', false)}>
+                  수정
+                </button>
+              )}
               <button onClick={() => changePage('next')}>다음</button>
             </div>
           ) : (

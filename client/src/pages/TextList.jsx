@@ -96,8 +96,10 @@ const TextList = ({ mode, setMode }) => {
           originalEng,
           productNameEng,
           modelResult,
+          directInput,
           humanCheck,
           worker,
+          inputFilter,
           date_modified,
           passCheck,
         },
@@ -117,15 +119,28 @@ const TextList = ({ mode, setMode }) => {
               <td className='tablet-none'>{index}</td>
               <td>{originalEng}</td>
               <td>{productNameEng}</td>
-              <td>{modelResult}</td>
+              <td>
+                {humanCheck
+                  ? directInput?.length === 0
+                    ? modelResult
+                    : directInput
+                  : modelResult}
+              </td>
               {humanCheck ? (
                 <>
+                  {Number(tf) === 1 && (
+                    <td>
+                      {(inputFilter === 'direct' && '직접') ||
+                        (inputFilter === 'model' && '모델') ||
+                        (inputFilter === 'candidate' && '후보')}
+                    </td>
+                  )}
                   <td className='tablet-none'>{worker}</td>
                   <td className='tablet-none'>{unix2time(date_modified)}</td>
                 </>
               ) : (
                 <>
-                  {(Number(tf) === 1 || Number(tf) === 3) && (
+                  {(Number(tf) === 1 || Number(tf) === 6) && (
                     <>
                       {' '}
                       <td className='tablet-none'>미완료</td>
@@ -223,9 +238,12 @@ const TextList = ({ mode, setMode }) => {
               }
               className='firstSelect'>
               <option value={0}>검수 미완료만 보기</option>
-              <option value={1}>검수 완료만 보기</option>
-              <option value={2}>검수 보류만 보기</option>
-              <option value={3}>전체 보기</option>
+              <option value={1}>검수 완료만 보기(전체)</option>
+              <option value={2}>검수 완료만 보기(모델)</option>
+              <option value={3}>검수 완료만 보기(후보)</option>
+              <option value={4}>검수 완료만 보기(직접)</option>
+              <option value={5}>검수 보류만 보기</option>
+              <option value={6}>전체 보기</option>
             </select>
             <select
               value={pageInfo.limit}
@@ -245,7 +263,6 @@ const TextList = ({ mode, setMode }) => {
               className='logout'
               onClick={() => {
                 removeCookie('myToken', { path: '/' });
-                removeCookie('rfToken', { path: '/' });
                 return navigate('/');
               }}>
               로그아웃
@@ -266,10 +283,11 @@ const TextList = ({ mode, setMode }) => {
                   <col width='15%' />
                   <col width='15%' />
                   <col
-                    width={Number(tf) === 1 || Number(tf) === 3 ? '20%' : '25%'}
+                    width={Number(tf) === 1 || Number(tf) === 6 ? '20%' : '25%'}
                   />
-                  {(Number(tf) === 1 || Number(tf) === 3) && (
+                  {(Number(tf) === 1 || Number(tf) === 6) && (
                     <>
+                      {Number(tf) === 1 && <col width='5%' />}
                       <col width='10%' className='tablet-none' />
                       <col width='15%' className='tablet-none' />
                     </>
@@ -281,11 +299,12 @@ const TextList = ({ mode, setMode }) => {
                     <th className='tablet-none'>ID</th>
                     <th>원본 영어</th>
                     <th>1차 가공 영어</th>
-                    {Number(tf) === 0 || Number(tf) === 2 ? (
+                    {Number(tf) === 0 || Number(tf) === 5 ? (
                       <th>후보 단어</th>
                     ) : (
                       <>
                         <th>결과</th>
+                        {Number(tf) === 1 && <th>종류</th>}
                         <th className='tablet-none'>검수자</th>
                         <th className='tablet-none'>검수 날짜</th>
                       </>

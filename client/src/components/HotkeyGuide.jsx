@@ -20,7 +20,7 @@ const HotkeyGuide = () => {
       onClick={() => guide === 'close' && setGuide('open')}>
       <div className='row head'>
         <span>
-          <p className='wide-tablet-none'>텍스트 검수</p> 단축키 가이드
+          <p className='wide-tablet-none'>텍스트 검수</p> 가이드
         </span>
         {guide === 'open' && (
           <div>
@@ -77,6 +77,18 @@ const HotkeyGuide = () => {
               <span className='key'>←</span> / <span className='key'>→</span>
             </div>
             <div>이전 페이지 / 다음 페이지</div>
+          </div>
+          <hr />
+          <div className='inputGuide'>
+            <p>
+              <span className='highlight'>모델 단어</span>가 결과일 때는 직접
+              입력해야 합니다.
+            </p>
+            <p>
+              직접 입력 항목을 입력하실 때 가장 유사하다고 생각하는 단어는{' '}
+              <span className='highlight'>콤마(,)를 기준</span>
+              으로 제일 앞에 적어 주세요.
+            </p>
           </div>
         </>
       )}

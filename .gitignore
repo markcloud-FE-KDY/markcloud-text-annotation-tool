@@ -4,3 +4,5 @@ __pycache__/
 best_model/
 result_txt/
 data/db/
+__init__.py
+node_modules/

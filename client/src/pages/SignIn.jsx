@@ -27,11 +27,11 @@ const SignIn = ({ mode, setMode }) => {
     }
     const result = await signIn(userId, userPw);
     if (typeof result === 'object') {
-      const { access_token, refresh_token } = result?.data?.data;
+      const { access_token, username } = result?.data;
       setCookie('myToken', access_token, {
         path: '/',
       });
-      setCookie('rfToken', refresh_token, {
+      setCookie('userInfo', username, {
         path: '/',
       });
       navigate('/home/0');
