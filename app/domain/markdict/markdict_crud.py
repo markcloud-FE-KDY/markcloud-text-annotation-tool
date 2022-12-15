@@ -7,22 +7,20 @@ from bson.objectid import ObjectId
 import time
 
 
+markdictCache = MarkdictCache()
+
+
 # 전체보기
-def retrieve_markdict_list(m: MarkdictList, search_option: list):    
-    global markdict_cache
-    global cache_key_list
-    
+def retrieve_markdict_list(m: MarkdictList, search_option: list):
     # 캐시 삭제
-    markdict_cache = {}
-    cache_key_list = []    
+    markdictCache.clear_cache()
 
     markdicts = []
-    # markdict_list = (
-    #     (mark_dict_collection.find({"$and": search_option})).sort("_id", 1).skip(m.page * m.size).limit(m.size)
-    # )
-    
     markdict_list = (
-        (mark_dict_collection.find({"$and": search_option})).sort([("date_modified", -1), ("_id", 1)]).skip(m.page * m.size).limit(m.size)
+        (mark_dict_collection.find({"$and": search_option}))
+        .sort([("date_modified", -1), ("_id", 1)])
+        .skip(m.page * m.size)
+        .limit(m.size)
     )
     for idx, markdict in enumerate(markdict_list):
         markdicts.append(markdict_list_helper(idx + m.page * m.size + 1, markdict))
@@ -40,53 +38,40 @@ def retrieve_markdict_list_range(search_option: str, sort_order: int):
     return markdicts
 
 
-def add_to_cache(markdicts: list):
-    check = False
-    for markdict in markdicts:
-        oid = markdict["id"]
-        # 캐시에 추가
-        markdict_cache[oid] = markdict
-        # 키값(oid)은 별도 리스트에 추가
-        if oid not in cache_key_list:
-            cache_key_list.append(oid)
-            check = True    
-    return check
-
-
 # 함수이름 바꾸기
 def get_range_and_add_to_cache(oid: str, search_option: str, query_option: str):
     if query_option == "gte":
         option_gte = [{"_id": {"$gte": ObjectId(oid)}}]
         markdicts = retrieve_markdict_list_range(search_option + option_gte, 1)
-        return add_to_cache(markdicts)
+        return markdictCache.insert_data(markdicts)
 
     else:
         option_lt = [{"_id": {"$lte": ObjectId(oid)}}]
         markdicts = retrieve_markdict_list_range(search_option + option_lt, -1)
-        return add_to_cache(markdicts)
+        return markdictCache.insert_data(markdicts)
 
 
-# current 
+# current
 def retrieve_markdict(oid: str, m: MarkdictData) -> dict:
-    cache_hit = markdict_cache.get(oid)
+    cache_hit = markdictCache.find_by_oid(oid)
     if cache_hit:
-        print("C A C H E  H I T  ! ")
+        print(" C A C H E   H I T !")
         print(cache_hit)
         return cache_hit
 
     print(f"{oid} is not in cache ")
-
+    # 캐시에 없을 경우 새로 추가.
     search_option = form_search_option(m)
     get_range_and_add_to_cache(oid, search_option, "gte")
     get_range_and_add_to_cache(oid, search_option, "lte")
 
-    cache_key_list.sort()
-    
-    return markdict_cache[oid]
+    markdictCache._cache_key_list.sort()
+    return markdictCache._cache[oid]
 
 
+# previous
 def retrieve_previous(oid: str, m: MarkdictData):
-    curr_idx = cache_key_list.index(oid)
+    curr_idx = markdictCache._cache_key_list.index(oid)
     if curr_idx == 0:
         search_option = form_search_option(m)
         result = get_range_and_add_to_cache(oid, search_option, "lte")
@@ -94,53 +79,54 @@ def retrieve_previous(oid: str, m: MarkdictData):
             return None
 
     prev_idx = curr_idx - 1
-    prev_oid = cache_key_list[prev_idx]
+    prev_oid = markdictCache._cache_key_list[prev_idx]
     return prev_oid
 
 
+# next
 def retrieve_next(oid: str, m: MarkdictData):
-    curr_idx = cache_key_list.index(oid)
-    if curr_idx == len(cache_key_list) - 1:
+    curr_idx = markdictCache._cache_key_list.index(oid)
+    if curr_idx == len(markdictCache._cache_key_list) - 1:
         search_option = form_search_option(m)
         result = get_range_and_add_to_cache(oid, search_option, "gte")
         if not result:
             return None
 
     next_idx = curr_idx + 1
-    next_oid = cache_key_list[next_idx]
+    next_oid = markdictCache._cache_key_list[next_idx]
     return next_oid
 
 
-# Update cache
-def update_cache(oid: str, modelResult: str, previousResult: str):
-    markdict_cache[oid]["modelResult"] = modelResult
-    markdict_cache[oid]["humanCheck"] = True
-    markdict_cache[oid]["passCheck"] = False
-    markdict_cache[oid]["previousResult"] = previousResult
-
-
-def update_db(oid: str, modelResult: str, previousResult: str):
+# Update
+def update_db_directInput(oid: str, user_input_list: list, input_filter: str, worker: str):
     oid = ObjectId(oid)
+    print("update worker")
+    print(worker)
     mark_dict_collection.update_one(
         {"_id": oid},
-        {"$set":
-            {
-                "modelResult": modelResult,
-                "previousResult": previousResult,
+        {
+            "$set": {
                 "date_modified": int(time.time()),
+                "directInput": user_input_list,
                 "humanCheck": True,
-                "passCheck": False
+                "passCheck": False,
+                "inputFilter": input_filter,
+                "worker": worker,
             }
-        }
+        },
     )
-    
 
+
+def update_cache_directInput(oid: str, user_input_list: list, input_filter: str, worker: str):
+    markdictCache._cache[oid]["humanCheck"] = True
+    markdictCache._cache[oid]["passCheck"] = False
+    markdictCache._cache[oid]["directInput"] = user_input_list
+    markdictCache._cache[oid]["inputFilter"] = input_filter
+    markdictCache._cache[oid]["worker"] = worker
+
+
+# 보류(pass)
 def add_pass_list(oid: str):
-    global markdict_cache
-    markdict_cache[oid]["passCheck"] = True
+    markdictCache._cache[oid]["passCheck"] = True
     oid = ObjectId(oid)
-    mark_dict_collection.update_one({"_id":oid}, {"$set":{"passCheck":True}})
-
-
-    
-
+    mark_dict_collection.update_one({"_id": oid}, {"$set": {"passCheck": True}})

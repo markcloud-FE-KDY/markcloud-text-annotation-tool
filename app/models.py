@@ -1,8 +1,13 @@
 from pydantic import BaseModel
 
 
+class User(BaseModel):
+    username: str
+    password: str
+
+
 class UpdateMarkDictModel(BaseModel):
-    modelResult: str
+    userInput: str
 
 
 def ResponseModel(data, message):
