@@ -119,7 +119,13 @@ const TextList = ({ mode, setMode }) => {
               <td className='tablet-none'>{index}</td>
               <td>{originalEng}</td>
               <td>{productNameEng}</td>
-              <td>{humanCheck ? directInput : modelResult}</td>
+              <td>
+                {humanCheck
+                  ? directInput?.length === 0
+                    ? modelResult
+                    : directInput
+                  : modelResult}
+              </td>
               {humanCheck ? (
                 <>
                   {Number(tf) === 1 && (
