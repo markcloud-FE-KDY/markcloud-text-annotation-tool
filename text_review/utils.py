@@ -32,7 +32,7 @@ def data_preprocess(updated_data):
     for ud in updated_data:
         words = ud.lower().split(" ")
         for word in words:
-            word2 = re.sub("[^a-zA-Z]", "", word)
+            word2 = re.sub("[^[ぁ-ゔァ-ヴー々〆〤a-zA-Z0-9&-]", "", word)
             if word2:
                 tmp.append(word2)
 

@@ -45,7 +45,7 @@ if __name__ == "__main__":
         # 6. modelResult를 마크서치에 검색
         marksearch_modelResult = list(set(marksearch(modelResult)))
         # [modelResult를 마크서치에 검색한 결과 리스트]에 productNameEng가 있으면
-        check = [s for s in marksearch_modelResult if productNameEng in s]
+        check = [s for s in marksearch_modelResult if productNameEng == s]
 
         # 6.1. 일치하는 항목이 있으면 `mark_dict` 컬렉션에 바로 저장
         if check:
@@ -62,7 +62,7 @@ if __name__ == "__main__":
             marksearch_productNameEng = list(set(marksearch(productNameEng)))
 
             # 6.2.2. [productNameEng를 마크서치에 검색한 결과 리스트]에 modelResult가 있으면
-            check2 = [s for s in marksearch_productNameEng if modelResult in s]
+            check2 = [s for s in marksearch_productNameEng if modelResult == s]
             if check2:
                 # 컬렉션에 저장 (humanCheck: true)
                 new_values = {
