@@ -27,8 +27,6 @@ const SignIn = ({ mode, setMode }) => {
     }
     const result = await signIn(userId, userPw);
     if (typeof result === 'object') {
-      // = 마크클라우드 로그인으로 전환할 시 주석 풀고 기존 코드 수정
-      // const { access_token, refresh_token } = result?.data?.data;
       const { access_token, username } = result?.data;
       setCookie('myToken', access_token, {
         path: '/',
@@ -36,9 +34,6 @@ const SignIn = ({ mode, setMode }) => {
       setCookie('userInfo', username, {
         path: '/',
       });
-      // setCookie('rfToken', refresh_token, {
-      //   path: '/'
-      // })
       navigate('/home/0');
     } else catchErrorHandler(result);
   };
