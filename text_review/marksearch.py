@@ -13,7 +13,7 @@ url = "https://imarksearch.com/marksearch/sangpyoSearchList.do"
 
 def marksearch(target_kor):
     files = []
-    payload = {"BrandName": f"{target_kor}"}
+    payload = {"BrandName": f"={target_kor}"}
     sleep_time = round(random.uniform(0.43, 1), 3)  # moderate
 
     headers = {
@@ -29,10 +29,10 @@ def marksearch(target_kor):
 
         for i in soup.find_all("i"):
             if not (i["sangpyoname"] == "" or i["sangpyoname"] == " "):
-                kor.append(i["sangpyoname"])
+                kor.append(i["sangpyoname"].replace(" ", ""))
 
             if not (i["sangpyoeng"] == "" or i["sangpyoeng"] == " "):
-                eng.append(i["sangpyoeng"].lower())
+                eng.append(i["sangpyoeng"].replace(" ", "").lower())
 
         time.sleep(sleep_time)
 
