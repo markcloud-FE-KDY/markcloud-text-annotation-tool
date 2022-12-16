@@ -1,7 +1,6 @@
 fastapi
 uvicorn
 pymongo
-dotenv
 python-dotenv
 python-jose
 passlib

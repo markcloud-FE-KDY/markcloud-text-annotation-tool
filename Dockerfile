@@ -18,7 +18,6 @@ ENV PATH="$VIRTUAL_ENV/bin:$PATH"
 COPY requirements.txt .
 RUN . /opt/venv/bin/activate \
     && pip install --upgrade pip \
-    && pip install --upgrade setuptools \
     && pip install -r requirements.txt
 
 # Run the application:
