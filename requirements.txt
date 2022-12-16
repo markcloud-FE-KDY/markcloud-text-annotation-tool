@@ -51,10 +51,6 @@ multidict==6.0.2
 multiprocess==0.70.14
 mypy-extensions==0.4.3
 numpy==1.23.5
-nvidia-cublas-cu11==11.10.3.66
-nvidia-cuda-nvrtc-cu11==11.7.99
-nvidia-cuda-runtime-cu11==11.7.99
-nvidia-cudnn-cu11==8.5.0.96
 oauthlib==3.2.2
 packaging==21.3
 pandas==1.5.1
