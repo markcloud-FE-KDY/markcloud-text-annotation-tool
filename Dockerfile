@@ -1,4 +1,3 @@
-# FROM python:3.9-buster
 FROM python:3.10-alpine
 RUN apk update && apk upgrade
 RUN apk add --no-cache pkgconfig \
