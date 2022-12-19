@@ -54,7 +54,7 @@ def update_markdict_data(
 
     modelResult = markdict["modelResult"]
     similarWords = markdict["similarWords"]
-
+    
     user_input = req["userInput"]
 
     # 직접입력 공백제거, 콤마단위로 구분. 빈문자열 제외.
@@ -62,14 +62,11 @@ def update_markdict_data(
 
     inputFilter = ""
 
-    # else:
     value = user_input_list[0]
     if value == modelResult:
         inputFilter = "model"
-
     elif value in similarWords:
         inputFilter = "candidate"
-
     else:
         inputFilter = "direct"
 
