@@ -32,16 +32,20 @@ const Pagination = ({ pageInfo, setPageInfo }) => {
   };
   const changePageGroup = p => {
     const arr = [];
-    let first = p - 4;
-    let last = p + 4;
-    if (p <= 5) {
-      first = 1;
-      last = 9;
-    }
-    if (p >= totalPage - 4) {
-      first = totalPage - 8;
-      last = totalPage;
-    }
+    let first =
+      p % 10 === 0
+        ? p - 9
+        : parseInt(p / 10) === 0
+        ? 1
+        : parseInt(p / 10) * 10 + 1;
+    let last =
+      p % 10 === 0
+        ? p
+        : parseInt(p / 10) === 0
+        ? 10
+        : parseInt(p / 10) * 10 + 10 > totalPage
+        ? totalPage
+        : parseInt(p / 10) * 10 + 10;
     if (totalPage < 10) {
       first = 1;
       last = totalPage;
@@ -53,7 +57,13 @@ const Pagination = ({ pageInfo, setPageInfo }) => {
   };
   const changePara = direction => {
     if (!direction) return;
-    changePage(direction === 'prev' ? page - 1 : page + 1);
+    changePage(
+      direction === 'prev'
+        ? page - 10
+        : page + 10 > totalPage
+        ? totalPage
+        : page + 10
+    );
   };
 
   useEffect(() => {
@@ -61,7 +71,7 @@ const Pagination = ({ pageInfo, setPageInfo }) => {
   }, [pageInfo]);
 
   const renderPagination = () => {
-    const prevCheck = page > 1;
+    const prevCheck = page > 10;
     const middle = pageGroup.reduce((acc, nowPage) => {
       return (
         <>
@@ -79,13 +89,19 @@ const Pagination = ({ pageInfo, setPageInfo }) => {
       <>
         <li
           onClick={() => changePara(prevCheck ? 'prev' : null)}
-          className={`prev ${page === 1 ? 'block' : 'active'}`}>
+          className={`prev ${page >= 11 ? 'active' : 'block'}`}>
           <GrFormPrevious />
         </li>
         {middle}
         <li
           onClick={() => changePara(nextCheck ? 'next' : null)}
-          className={`next ${totalPage === page ? 'block' : 'active'}`}>
+          className={`next ${
+            totalPage >= 11
+              ? pageGroup.includes(totalPage)
+                ? 'block'
+                : 'active'
+              : 'block'
+          }`}>
           <GrFormNext />
         </li>
       </>

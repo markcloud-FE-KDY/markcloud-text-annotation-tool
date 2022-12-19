@@ -308,21 +308,27 @@ const TextInspection = ({ mode, setMode }) => {
         <div className='btnWrap column'>
           {info?.humanCheck ? (
             <div className='row'>
-              {info?.worker === getCookie('userInfo') && (
+              {info?.worker === getCookie('userInfo') ||
+              getCookie('userInfo') === 'admin' ? (
                 <button
                   onClick={() => changeState(setInfo, 'humanCheck', false)}>
                   수정
                 </button>
+              ) : (
+                ''
               )}
               <button onClick={() => changePage('next')}>다음</button>
             </div>
           ) : info?.passCheck ? (
             <div className='row'>
-              {info?.worker === getCookie('userInfo') && (
+              {info?.worker === getCookie('userInfo') ||
+              getCookie('userInfo') === 'admin' ? (
                 <button
                   onClick={() => changeState(setInfo, 'passCheck', false)}>
                   수정
                 </button>
+              ) : (
+                ''
               )}
               <button onClick={() => changePage('next')}>다음</button>
             </div>
