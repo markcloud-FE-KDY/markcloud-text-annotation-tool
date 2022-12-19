@@ -1,4 +1,13 @@
-FROM python:3.9-buster
+FROM python:3.10-alpine
+RUN apk update && apk upgrade
+RUN apk add --no-cache pkgconfig \
+                       gcc \
+                       openldap \
+                       libcurl \
+                       gpgme-dev \
+                       libc-dev \
+                       && rm -rf /var/cache/apk/*
+
 
 ENV VIRTUAL_ENV=/opt/venv
 RUN python3 -m venv $VIRTUAL_ENV
@@ -11,6 +20,6 @@ RUN . /opt/venv/bin/activate \
     && pip install -r requirements.txt
 
 # Run the application:
-COPY . /
+COPY . /service
 
-WORKDIR /
+WORKDIR /service

@@ -14,12 +14,19 @@ def split_originalEng_list(s):
 
 
 def markdict_list_helper(idx: int, markdict: dict) -> dict:
+    tmp = markdict["directInput"]
+    if isinstance(tmp, list):
+        markdict["directInput"] = tmp[0]
+        pass
+    else:
+        markdict["directInput"] = []
+        
     return {
         "index": idx,
         "id": str(markdict["_id"]),
         "productNameEng": markdict["productNameEng"],
         "modelResult": markdict["modelResult"],
-        "originalEng": split_originalEng_list(markdict["originalEng"]),
+        "originalEng": split_originalEng_list(markdict["originalEng"])[0],
         "worker": markdict["worker"] if "worker" in markdict else "",
         "date_modified": markdict["date_modified"],
         "finalCheck": markdict["finalCheck"],
@@ -31,6 +38,9 @@ def markdict_list_helper(idx: int, markdict: dict) -> dict:
 
 
 def markdict_detail_helper(markdict: dict) -> dict:
+    tmp = markdict["directInput"]
+    if isinstance(tmp, str):
+        markdict["directInput"] = []
     return {
         "id": str(markdict["_id"]),
         "productNameEng": markdict["productNameEng"],

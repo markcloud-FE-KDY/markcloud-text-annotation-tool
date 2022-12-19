@@ -100,8 +100,6 @@ def retrieve_next(oid: str, m: MarkdictData):
 # Update
 def update_db_directInput(oid: str, user_input_list: list, input_filter: str, worker: str):
     oid = ObjectId(oid)
-    print("update worker")
-    print(worker)
     mark_dict_collection.update_one(
         {"_id": oid},
         {
@@ -109,6 +107,7 @@ def update_db_directInput(oid: str, user_input_list: list, input_filter: str, wo
                 "date_modified": int(time.time()),
                 "directInput": user_input_list,
                 "humanCheck": True,
+                "finalCheck": True if worker == "admin" else False,
                 "passCheck": False,
                 "inputFilter": input_filter,
                 "worker": worker,
