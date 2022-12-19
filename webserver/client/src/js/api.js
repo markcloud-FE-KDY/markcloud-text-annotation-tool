@@ -6,11 +6,9 @@ const catchError = async error => {
   const { status } = error?.response;
   const { detail } = error?.response?.data;
   switch (status) {
-    case 403:
-      if (detail?.includes('Invaild Password')) return 'wrongPw';
-      else if (detail === 'Invaild User ID') return 'wrongId';
-      else if (detail === 'Logins Exceeded') return 'excessLogin';
-      else if (detail === 'Retired User') return 'retiredUser';
+    case 401:
+      if (detail === 'Incorrect username or password')
+        return alert('아이디 또는 비밀번호가 틀렸습니다.\n다시 입력해 주세요.');
       break;
     case 500:
     case 504:
