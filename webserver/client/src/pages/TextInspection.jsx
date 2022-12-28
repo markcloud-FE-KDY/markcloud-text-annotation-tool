@@ -220,9 +220,9 @@ const TextInspection = ({ mode, setMode }) => {
                 </span>
                 <div className='modelResults'>
                   {info?.humanCheck
-                    ? (info?.inputFilter === 'direct' && '직접') ||
-                      (info?.inputFilter === 'candidate' && '후보') ||
-                      (info?.inputFilter === 'model' && '모델')
+                    ? (info?.resultStatus === 'direct' && '직접') ||
+                      (info?.resultStatus === 'candidate' && '후보') ||
+                      (info?.resultStatus === 'model' && '모델')
                     : info?.modelResult}
                 </div>
               </div>
