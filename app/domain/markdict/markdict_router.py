@@ -55,22 +55,27 @@ def update_markdict_data(
     modelResult = markdict["modelResult"]
     similarWords = markdict["similarWords"]
     
+    print("s i m i l a r  w o r d s ")
+    for word in similarWords:
+        print(word)
+    print("=========================")
+    
     user_input = req["userInput"]
 
     # 직접입력 공백제거, 콤마단위로 구분. 빈문자열 제외.
     user_input_list = [x.strip() for x in user_input.split(",") if x.strip()]
 
-    inputFilter = ""
+    resultStatus = ""
 
     value = user_input_list[0]
     if value == modelResult:
-        inputFilter = "model"
+        resultStatus = "model"
     elif value in similarWords:
-        inputFilter = "candidate"
+        resultStatus = "candidate"
     else:
-        inputFilter = "direct"
+        resultStatus = "direct"
 
-    update_db_directInput(oid, user_input_list, inputFilter, worker)
-    update_cache_directInput(oid, user_input_list, inputFilter, worker)
+    update_db_directInput(oid, user_input_list, resultStatus, worker)
+    update_cache_directInput(oid, user_input_list, resultStatus, worker)
 
     return {"status": "complete"}
