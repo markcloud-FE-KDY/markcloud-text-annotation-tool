@@ -18,7 +18,7 @@ def retrieve_markdict_list(m: MarkdictList, search_option: list):
     markdicts = []
     markdict_list = (
         (mark_dict_collection.find({"$and": search_option}))
-        .sort([("date_modified", -1), ("_id", 1)])
+        .sort([("dateModified", -1), ("_id", 1)])
         .skip(m.page * m.size)
         .limit(m.size)
     )
@@ -38,7 +38,6 @@ def retrieve_markdict_list_range(search_option: str, sort_order: int):
     return markdicts
 
 
-# 함수이름 바꾸기
 def get_range_and_add_to_cache(oid: str, search_option: str, query_option: str):
     if query_option == "gte":
         option_gte = [{"_id": {"$gte": ObjectId(oid)}}]
@@ -57,6 +56,7 @@ def retrieve_markdict(oid: str, m: MarkdictData) -> dict:
     if cache_hit:
         print(" C A C H E   H I T !")
         print(cache_hit)
+        print(cache_hit["productNameEng"], cache_hit["modelResult"], cache_hit["similarWords"])
         return cache_hit
 
     print(f"{oid} is not in cache ")
@@ -98,18 +98,18 @@ def retrieve_next(oid: str, m: MarkdictData):
 
 
 # Update
-def update_db_directInput(oid: str, user_input_list: list, input_filter: str, worker: str):
+def update_db_directInput(oid: str, user_input_list: list, result_status: str, worker: str):
     oid = ObjectId(oid)
     mark_dict_collection.update_one(
         {"_id": oid},
         {
             "$set": {
-                "date_modified": int(time.time()),
+                "dateModified": int(time.time()),
                 "directInput": user_input_list,
-                "humanCheck": True,
-                "finalCheck": True if worker == "admin" else False,
-                "passCheck": False,
-                "inputFilter": input_filter,
+                "Check.humanCheck": True,
+                "Check.finalCheck": True if worker == "admin" else False,
+                "Check.passCheck": False,
+                "resultStatus": result_status,
                 "worker": worker,
             }
         },
@@ -120,7 +120,7 @@ def update_cache_directInput(oid: str, user_input_list: list, input_filter: str,
     markdictCache._cache[oid]["humanCheck"] = True
     markdictCache._cache[oid]["passCheck"] = False
     markdictCache._cache[oid]["directInput"] = user_input_list
-    markdictCache._cache[oid]["inputFilter"] = input_filter
+    markdictCache._cache[oid]["resultStatus"] = input_filter
     markdictCache._cache[oid]["worker"] = worker
 
 
@@ -128,4 +128,4 @@ def update_cache_directInput(oid: str, user_input_list: list, input_filter: str,
 def add_pass_list(oid: str):
     markdictCache._cache[oid]["passCheck"] = True
     oid = ObjectId(oid)
-    mark_dict_collection.update_one({"_id": oid}, {"$set": {"passCheck": True}})
+    mark_dict_collection.update_one({"_id": oid}, {"$set": {"Check.passCheck": True}})
