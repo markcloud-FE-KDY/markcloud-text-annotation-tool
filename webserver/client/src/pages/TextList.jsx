@@ -99,8 +99,8 @@ const TextList = ({ mode, setMode }) => {
           directInput,
           humanCheck,
           worker,
-          inputFilter,
-          date_modified,
+          resultStatus,
+          dateModified,
           passCheck,
         },
         idx
@@ -123,6 +123,8 @@ const TextList = ({ mode, setMode }) => {
                 {humanCheck
                   ? directInput?.length === 0
                     ? modelResult
+                    : directInput?.length >= 2
+                    ? directInput.slice(0, 1)
                     : directInput
                   : modelResult}
               </td>
@@ -130,13 +132,14 @@ const TextList = ({ mode, setMode }) => {
                 <>
                   {Number(tf) === 1 && (
                     <td>
-                      {(inputFilter === 'direct' && '직접') ||
-                        (inputFilter === 'model' && '모델') ||
-                        (inputFilter === 'candidate' && '후보')}
+                      {(resultStatus === 'direct' && '직접') ||
+                        (resultStatus === 'model' && '모델') ||
+                        (resultStatus === 'candidate' && '후보') ||
+                        (resultStatus === 'original' && '기본')}
                     </td>
                   )}
                   <td className='tablet-none'>{worker}</td>
-                  <td className='tablet-none'>{unix2time(date_modified)}</td>
+                  <td className='tablet-none'>{unix2time(dateModified)}</td>
                 </>
               ) : (
                 <>
