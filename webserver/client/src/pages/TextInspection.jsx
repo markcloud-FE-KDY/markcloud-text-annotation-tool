@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import $ from 'jquery';
-import { useParams, useNavigate } from 'react-router-dom';
 import ReactHotKey from 'react-shortcut';
+import { useParams, useNavigate } from 'react-router-dom';
 import { ImArrowLeft, ImArrowRight } from 'react-icons/im';
 import HotkeyGuide from 'components/HotkeyGuide';
 import ViewMode from 'components/ViewMode';
@@ -35,7 +35,7 @@ const TextInspection = ({ mode, setMode }) => {
       const date = word.split('&');
       result = await getTextDetail(oid, tf, false, false, date[0], date[1]);
     }
-    if (typeof result === 'object')
+    if (typeof result === 'object') {
       setInfo(prev => {
         let clone = { ...prev };
         clone = result?.data?.current;
@@ -43,13 +43,18 @@ const TextInspection = ({ mode, setMode }) => {
         clone.prev = result?.data?.previous;
         return clone;
       });
-    else return catchErrorHandler(result);
+    } else return catchErrorHandler(result);
   };
 
   const changePage = direction => {
     if (info[direction] === null)
       return alert(`${direction === 'prev' ? '첫' : '마지막'} 페이지입니다.`);
-    else if (option?.length && word?.length)
+
+    if (direction === 'next')
+      localStorage.setItem('idx', Number(localStorage.getItem('idx')) + 1);
+    else localStorage.setItem('idx', Number(localStorage.getItem('idx')) - 1);
+
+    if (option?.length && word?.length)
       navigate(`/detail/${tf}/${option}/${word}/${info[direction]}`);
     else navigate(`/detail/${tf}/${info[direction]}`);
   };

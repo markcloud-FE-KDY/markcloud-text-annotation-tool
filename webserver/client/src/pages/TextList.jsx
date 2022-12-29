@@ -26,6 +26,8 @@ const TextList = ({ mode, setMode }) => {
 
   useEffect(() => {
     document.title = '마크클라우드 텍스트 검수 > 홈';
+    localStorage.removeItem('idx');
+    localStorage.removeItem('limit');
   }, []);
 
   const getTextList = async () => {
@@ -111,11 +113,13 @@ const TextList = ({ mode, setMode }) => {
             <Link></Link>
             <tr
               className={idx % 2 === 1 ? 'odd' : 'even'}
-              onClick={() =>
+              onClick={() => {
+                localStorage.setItem('idx', index);
+                localStorage.setItem('limit', pageInfo.limit);
                 option && word
                   ? navigate(`/detail/${tf}/${option}/${word}/${id}`)
-                  : navigate(`/detail/${tf}/${id}`)
-              }>
+                  : navigate(`/detail/${tf}/${id}`);
+              }}>
               <td className='tablet-none'>{index}</td>
               <td>{originalEng}</td>
               <td>{productNameEng}</td>
@@ -139,7 +143,9 @@ const TextList = ({ mode, setMode }) => {
                     </td>
                   )}
                   <td className='tablet-none'>{worker}</td>
-                  <td className='tablet-none'>{unix2time(dateModified)}</td>
+                  <td className='tablet-none'>
+                    {dateModified === null ? '' : unix2time(dateModified)}
+                  </td>
                 </>
               ) : (
                 <>
