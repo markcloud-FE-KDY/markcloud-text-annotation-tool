@@ -17,6 +17,7 @@ const TextInspection = ({ mode, setMode }) => {
   const navigate = useNavigate();
   let prevent = false;
 
+  //= 상세내역 불러오기
   const getDetail = async () => {
     if (prevent) return;
     prevent = true;
@@ -41,24 +42,33 @@ const TextInspection = ({ mode, setMode }) => {
         clone = result?.data?.current;
         clone.next = result?.data?.next;
         clone.prev = result?.data?.previous;
+        clone.pageUp = result?.data?.pageUp;
+        clone.pageDown = result?.data?.pageDown;
         return clone;
       });
     } else return catchErrorHandler(result);
   };
 
+  //= direction에 따라 페이지 변경
   const changePage = direction => {
-    if (info[direction] === null)
-      return alert(`${direction === 'prev' ? '첫' : '마지막'} 페이지입니다.`);
-
-    if (direction === 'next')
-      localStorage.setItem('idx', Number(localStorage.getItem('idx')) + 1);
-    else localStorage.setItem('idx', Number(localStorage.getItem('idx')) - 1);
+    if (direction === 'next' && info.pageUp)
+      localStorage.setItem('page', Number(localStorage.getItem('page')) + 1);
+    else if (direction === 'prev' && info.pageDown)
+      localStorage.setItem('page', Number(localStorage.getItem('page')) - 1);
+    else if (
+      localStorage.getItem('totalPage') === localStorage.getItem('page') &&
+      info.next === null
+    )
+      return alert(`마지막 페이지입니다.`);
+    else if (localStorage.getItem('page') === 1 && info.prev === null)
+      return alert(`첫 페이지입니다.`);
 
     if (option?.length && word?.length)
       navigate(`/detail/${tf}/${option}/${word}/${info[direction]}`);
     else navigate(`/detail/${tf}/${info[direction]}`);
   };
 
+  //= 검수
   const postResult = async status => {
     let data;
     if (status === 'pass') {
@@ -79,6 +89,7 @@ const TextInspection = ({ mode, setMode }) => {
     } else return catchErrorHandler(result);
   };
 
+  //= 단축키로 유사 단어 선택할 때
   const hotkeyCheck = i => {
     if (info?.passCheck || info?.humanCheck) return;
     $('.active').removeClass('active');
@@ -91,6 +102,7 @@ const TextInspection = ({ mode, setMode }) => {
     $(`#${i}`).addClass('active');
   };
 
+  //= 직접 유사 단어 선택할 때
   const checkSimilar = e => {
     if (info?.passCheck || info?.humanCheck) return;
     $('.active').removeClass('active');
