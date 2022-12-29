@@ -137,7 +137,7 @@ const TextList = ({ mode, setMode }) => {
                     </td>
                   )}
                   <td className='tablet-none'>{worker}</td>
-                  <td className='tablet-none'>{unix2time(dateModified)}</td>
+                  <td className='tablet-none'>{dateModified === null ? '' : unix2time(dateModified)}</td>
                 </>
               ) : (
                 <>
