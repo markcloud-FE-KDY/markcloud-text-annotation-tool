@@ -123,6 +123,8 @@ const TextList = ({ mode, setMode }) => {
                 {humanCheck
                   ? directInput?.length === 0
                     ? modelResult
+                    : directInput?.length >= 2
+                    ? directInput.slice(0, 1)
                     : directInput
                   : modelResult}
               </td>
