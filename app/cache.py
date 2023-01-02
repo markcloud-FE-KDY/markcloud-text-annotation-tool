@@ -12,12 +12,6 @@ class MarkdictCache:
     def show_cache(self):
         print(self._cache)
         return self._cache
-    
-    def show_cache_2(self):
-        for k in self._cache_key_list:
-            print(self._cache.get(k)['modelResult'])
-        print()
-        print(len(self._cache_key_list))
 
     def insert_data(self, datas):
         check = False
