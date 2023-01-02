@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import $ from 'jquery';
-import { useParams, useNavigate } from 'react-router-dom';
 import ReactHotKey from 'react-shortcut';
+import { useParams, useNavigate } from 'react-router-dom';
 import { ImArrowLeft, ImArrowRight } from 'react-icons/im';
 import HotkeyGuide from 'components/HotkeyGuide';
 import ViewMode from 'components/ViewMode';
@@ -17,6 +17,7 @@ const TextInspection = ({ mode, setMode }) => {
   const navigate = useNavigate();
   let prevent = false;
 
+  //= 상세내역 불러오기
   const getDetail = async () => {
     if (prevent) return;
     prevent = true;
@@ -35,31 +36,49 @@ const TextInspection = ({ mode, setMode }) => {
       const date = word.split('&');
       result = await getTextDetail(oid, tf, false, false, date[0], date[1]);
     }
-    if (typeof result === 'object')
+    if (typeof result === 'object') {
       setInfo(prev => {
         let clone = { ...prev };
         clone = result?.data?.current;
         clone.next = result?.data?.next;
         clone.prev = result?.data?.previous;
+        clone.pageUp = result?.data?.pageUp;
+        clone.pageDown = result?.data?.pageDown;
         return clone;
       });
-    else return catchErrorHandler(result);
+    } else return catchErrorHandler(result);
   };
 
+  //= direction에 따라 페이지 변경
   const changePage = direction => {
-    if (info[direction] === null)
-      return alert(`${direction === 'prev' ? '첫' : '마지막'} 페이지입니다.`);
-    else if (option?.length && word?.length)
+    if (direction === 'next' && info.pageUp)
+      localStorage.setItem('page', Number(localStorage.getItem('page')) + 1);
+    else if (direction === 'prev' && info.pageDown)
+      localStorage.setItem('page', Number(localStorage.getItem('page')) - 1);
+    else if (
+      direction === 'next' &&
+      Number(localStorage.getItem('totalPage')) ===
+        Number(localStorage.getItem('page')) &&
+      info.next === null
+    )
+      return alert(`마지막 페이지입니다.`);
+    else if (
+      direction === 'prev' &&
+      Number(localStorage.getItem('page')) === 1 &&
+      info.prev === null
+    )
+      return alert(`첫 페이지입니다.`);
+
+    if (option?.length && word?.length)
       navigate(`/detail/${tf}/${option}/${word}/${info[direction]}`);
     else navigate(`/detail/${tf}/${info[direction]}`);
   };
 
+  //= 검수
   const postResult = async status => {
     let data;
-    if (status === 'pass') {
-      if (info?.passCheck) return console.log('pass');
-      data = { userInput: '' };
-    } else {
+    if (status === 'pass') data = { userInput: '' };
+    else {
       if (!input.length && !similar.length)
         return alert('유사 단어를 선택하거나 입력해 주세요.');
       data = { userInput: `${input.length ? input : similar}` };
@@ -70,10 +89,19 @@ const TextInspection = ({ mode, setMode }) => {
       setSimilar('');
       $('input').blur();
       if (status === 'pass') getDetail();
-      else changePage('next');
+      if (
+        localStorage.getItem('page') === localStorage.getItem('totalPage') &&
+        info.next === null
+      ) {
+        navigate('/home/0');
+        return alert(
+          '마지막 페이지이므로 리스트로 이동합니다.'
+        );
+      } else changePage('next');
     } else return catchErrorHandler(result);
   };
 
+  //= 단축키로 유사 단어 선택할 때
   const hotkeyCheck = i => {
     if (info?.passCheck || info?.humanCheck) return;
     $('.active').removeClass('active');
@@ -86,6 +114,7 @@ const TextInspection = ({ mode, setMode }) => {
     $(`#${i}`).addClass('active');
   };
 
+  //= 직접 유사 단어 선택할 때
   const checkSimilar = e => {
     if (info?.passCheck || info?.humanCheck) return;
     $('.active').removeClass('active');
@@ -307,9 +336,10 @@ const TextInspection = ({ mode, setMode }) => {
         <hr />
         <div className='btnWrap column'>
           {info?.humanCheck ? (
+            // = 완료
             <div className='row'>
               {info?.worker === getCookie('userInfo') ||
-              getCookie('userInfo') === 'admin' ? (
+              getCookie('userInfo').includes('admin') ? (
                 <button
                   onClick={() => changeState(setInfo, 'humanCheck', false)}>
                   수정
@@ -319,20 +349,16 @@ const TextInspection = ({ mode, setMode }) => {
               )}
               <button onClick={() => changePage('next')}>다음</button>
             </div>
-          ) : info?.passCheck ? (
+          ) : // = 보류
+          info?.passCheck ? (
             <div className='row'>
-              {info?.worker === getCookie('userInfo') ||
-              getCookie('userInfo') === 'admin' ? (
-                <button
-                  onClick={() => changeState(setInfo, 'passCheck', false)}>
-                  수정
-                </button>
-              ) : (
-                ''
-              )}
+              <button onClick={() => changeState(setInfo, 'passCheck', false)}>
+                수정
+              </button>
               <button onClick={() => changePage('next')}>다음</button>
             </div>
           ) : (
+            // = 입력
             <div className='row'>
               <button onClick={() => postResult('pass')}>보류</button>
               <button onClick={() => postResult('complete')}>완료</button>

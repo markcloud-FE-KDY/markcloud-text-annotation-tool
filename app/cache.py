@@ -23,6 +23,18 @@ class MarkdictCache:
                 self._cache[oid] = data
                 check = True
         return check
+    
+    def insert_data_front(self, datas):
+        check = False
+        datas.reverse()
+        for data in datas:
+            oid = data["id"]
+            # 캐시에 새로 들어간 값이 있는지 체크
+            if oid not in self._cache_key_list:
+                self._cache_key_list.insert(0, oid)
+                self._cache[oid] = data
+                check = True
+        return check
 
     def clear_cache(self):
         self._cache = {}

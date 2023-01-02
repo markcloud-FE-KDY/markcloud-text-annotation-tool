@@ -64,11 +64,15 @@ export const getTextDetail = async (
 ) => {
   try {
     return await axios.get(
-      `/markdict/detail?oid=${oid}&tf=${select}${
-        keyword ? `&keyword=${keyword}` : ''
-      }${worker ? `&worker=${worker}` : ''}&date_start=${
-        date_start ? `${date_start}` : '0'
-      }&date_end=${date_end ? `${date_end}` : '0'}`
+      `/markdict/detail?oid=${oid}&tf=${select}
+          &page=${
+            Number(localStorage.getItem('page')) - 1
+          }&size=${localStorage.getItem('limit')}
+      ${keyword ? `&keyword=${keyword}` : ''}${
+        worker ? `&worker=${worker}` : ''
+      }&date_start=${date_start ? `${date_start}` : '0'}&date_end=${
+        date_end ? `${date_end}` : '0'
+      }`
     );
   } catch (error) {
     return catchError(error);
