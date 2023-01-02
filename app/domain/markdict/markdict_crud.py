@@ -50,6 +50,34 @@ def get_range_and_add_to_cache(oid: str, search_option: str, query_option: str):
         return markdictCache.insert_data(markdicts)
 
 
+def uu__uu(m: MarkdictList, search_option: str):
+    print(" u u ")
+    markdicts = []
+    markdict_list = (
+    (mark_dict_collection.find({"$and": search_option}))
+    .sort([("dateModified", -1), ("_id", 1)])
+    .skip(m.page * m.size)
+    .limit(m.size)
+    )    
+    for markdict in markdict_list:
+        markdicts.append(markdict_detail_helper(markdict))
+    markdictCache.insert_data(markdicts)
+    
+
+def uu__prev(m: MarkdictList, search_option: str):
+    print(" u u  p r e v")
+    markdicts = []
+    markdict_list = (
+    (mark_dict_collection.find({"$and": search_option}))
+    .sort([("dateModified", -1), ("_id", 1)])
+    .skip(m.page * m.size)
+    .limit(m.size)
+    )    
+    for markdict in markdict_list:
+        markdicts.append(markdict_detail_helper(markdict))
+    markdictCache.insert_data_front(markdicts)
+    
+    
 # current
 def retrieve_markdict(oid: str, m: MarkdictData) -> dict:
     cache_hit = markdictCache.find_by_oid(oid)
@@ -62,39 +90,90 @@ def retrieve_markdict(oid: str, m: MarkdictData) -> dict:
     print(f"{oid} is not in cache ")
     # 캐시에 없을 경우 새로 추가.
     search_option = form_search_option(m)
+
+    if m.tf in [1,2,3,4,6]:
+        uu__uu(m, search_option)
+        # markdictCache.show_cache_2()
+        return markdictCache._cache[oid]
+    
     get_range_and_add_to_cache(oid, search_option, "gte")
     get_range_and_add_to_cache(oid, search_option, "lte")
 
     markdictCache._cache_key_list.sort()
+    
     return markdictCache._cache[oid]
 
 
+
 # previous
-def retrieve_previous(oid: str, m: MarkdictData):
+def retrieve_previous(oid: str, m: MarkdictList):
     curr_idx = markdictCache._cache_key_list.index(oid)
-    if curr_idx == 0:
+    print("curr : ", oid, markdictCache._cache.get(oid)["modelResult"], curr_idx)
+    
+    if m.tf in [0,5]:
+        if curr_idx == 0:
+            search_option = form_search_option(m)
+            result = get_range_and_add_to_cache(oid, search_option, "lte")
+            if not result:
+                return None, False
+
+        prev_idx = curr_idx - 1
+        prev_oid = markdictCache._cache_key_list[prev_idx]
+        return prev_oid, False
+    
+    if curr_idx % m.size == 0:
+
+        if m.tf in [1,2,3,4,6]:
+            # previous
+            if m.page <= 0:
+                print("맨 앞 페이지")
+                return None, False
+            
+            search_option = form_search_option(m)
+            uu__prev(m, search_option)
+            markdictCache.show_cache_2()
+            
+            curr_idx = markdictCache._cache_key_list.index(oid)
+            prev_idx = curr_idx - 1
+            prev_oid = markdictCache._cache_key_list[prev_idx]
+            
+            return prev_oid, True
+    
         search_option = form_search_option(m)
         result = get_range_and_add_to_cache(oid, search_option, "lte")
         if not result:
-            return None
-
+            return None, False
+        
     prev_idx = curr_idx - 1
     prev_oid = markdictCache._cache_key_list[prev_idx]
-    return prev_oid
+    return prev_oid, False
 
 
 # next
-def retrieve_next(oid: str, m: MarkdictData):
+def retrieve_next(oid: str, m: MarkdictList):
     curr_idx = markdictCache._cache_key_list.index(oid)
-    if curr_idx == len(markdictCache._cache_key_list) - 1:
+    print("curr (n) : ", oid, markdictCache._cache.get(oid)["modelResult"], curr_idx)
+    if (curr_idx == len(markdictCache._cache_key_list) - 1) or ((curr_idx+1)%m.size == 0):
+        
+        if m.tf in [1,2,3,4,6]:
+            
+            m.page = m.page + 1
+            search_option = form_search_option(m)
+            uu__uu(m, search_option)
+            markdictCache.show_cache_2()
+            
+            next_idx = curr_idx + 1
+            next_oid = markdictCache._cache_key_list[next_idx]
+            return next_oid, True
+        
         search_option = form_search_option(m)
         result = get_range_and_add_to_cache(oid, search_option, "gte")
         if not result:
-            return None
+            return None, False
 
     next_idx = curr_idx + 1
     next_oid = markdictCache._cache_key_list[next_idx]
-    return next_oid
+    return next_oid, False
 
 
 # Update
