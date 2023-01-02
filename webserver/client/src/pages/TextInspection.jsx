@@ -95,7 +95,7 @@ const TextInspection = ({ mode, setMode }) => {
       ) {
         navigate('/home/0');
         return alert(
-          '마지막 페이지이므로\n리스트 페이지로 페이지를 전환합니다.'
+          '마지막 페이지이므로 리스트로 이동합니다.'
         );
       } else changePage('next');
     } else return catchErrorHandler(result);
