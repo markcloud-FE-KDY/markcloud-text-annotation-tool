@@ -77,10 +77,8 @@ const TextInspection = ({ mode, setMode }) => {
   //= 검수
   const postResult = async status => {
     let data;
-    if (status === 'pass') {
-      if (info?.passCheck) return console.log('pass');
-      data = { userInput: '' };
-    } else {
+    if (status === 'pass') data = { userInput: '' };
+    else {
       if (!input.length && !similar.length)
         return alert('유사 단어를 선택하거나 입력해 주세요.');
       data = { userInput: `${input.length ? input : similar}` };
@@ -91,7 +89,15 @@ const TextInspection = ({ mode, setMode }) => {
       setSimilar('');
       $('input').blur();
       if (status === 'pass') getDetail();
-      else changePage('next');
+      if (
+        localStorage.getItem('page') === localStorage.getItem('totalPage') &&
+        info.next === null
+      ) {
+        navigate('/home/0');
+        return alert(
+          '마지막 페이지이므로\n리스트 페이지로 페이지를 전환합니다.'
+        );
+      } else changePage('next');
     } else return catchErrorHandler(result);
   };
 
@@ -330,9 +336,10 @@ const TextInspection = ({ mode, setMode }) => {
         <hr />
         <div className='btnWrap column'>
           {info?.humanCheck ? (
+            // = 완료
             <div className='row'>
               {info?.worker === getCookie('userInfo') ||
-              getCookie('userInfo') === 'admin' ? (
+              getCookie('userInfo').includes('admin') ? (
                 <button
                   onClick={() => changeState(setInfo, 'humanCheck', false)}>
                   수정
@@ -342,20 +349,16 @@ const TextInspection = ({ mode, setMode }) => {
               )}
               <button onClick={() => changePage('next')}>다음</button>
             </div>
-          ) : info?.passCheck ? (
+          ) : // = 보류
+          info?.passCheck ? (
             <div className='row'>
-              {info?.worker === getCookie('userInfo') ||
-              getCookie('userInfo') === 'admin' ? (
-                <button
-                  onClick={() => changeState(setInfo, 'passCheck', false)}>
-                  수정
-                </button>
-              ) : (
-                ''
-              )}
+              <button onClick={() => changeState(setInfo, 'passCheck', false)}>
+                수정
+              </button>
               <button onClick={() => changePage('next')}>다음</button>
             </div>
           ) : (
+            // = 입력
             <div className='row'>
               <button onClick={() => postResult('pass')}>보류</button>
               <button onClick={() => postResult('complete')}>완료</button>
