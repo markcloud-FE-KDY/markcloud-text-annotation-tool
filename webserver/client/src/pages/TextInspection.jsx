@@ -56,11 +56,17 @@ const TextInspection = ({ mode, setMode }) => {
     else if (direction === 'prev' && info.pageDown)
       localStorage.setItem('page', Number(localStorage.getItem('page')) - 1);
     else if (
-      localStorage.getItem('totalPage') === localStorage.getItem('page') &&
+      direction === 'next' &&
+      Number(localStorage.getItem('totalPage')) ===
+        Number(localStorage.getItem('page')) &&
       info.next === null
     )
       return alert(`마지막 페이지입니다.`);
-    else if (localStorage.getItem('page') === 1 && info.prev === null)
+    else if (
+      direction === 'prev' &&
+      Number(localStorage.getItem('page')) === 1 &&
+      info.prev === null
+    )
       return alert(`첫 페이지입니다.`);
 
     if (option?.length && word?.length)
