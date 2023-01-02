@@ -14,23 +14,32 @@ router = APIRouter()
 
 
 @router.get("/list_search")
-def markdict_list_search(s: MarkdictList = Depends()):
-    search_option = form_search_option(s)
+def markdict_list_search( m: MarkdictList = Depends()):
+    search_option = form_search_option(m)
     total = get_count(search_option)
-    _markdict_list = retrieve_markdict_list(s, search_option)
+    _markdict_list = retrieve_markdict_list(m, search_option)
     return {
-        "meta": {"total": total, "page": s.page, "limit": s.size, "page_count": math.ceil(total / s.size)},
+        "meta": {"total": total, "page": m.page, "limit": m.size, "page_count": math.ceil(total / m.size)},
         "data": _markdict_list,
     }
 
 
 @router.get("/detail")
-def get_markdict_data(oid: str, m: MarkdictData = Depends()):
+def get_markdict_data(oid: str, m: MarkdictList = Depends()):
     try:
         markdict = retrieve_markdict(oid, m)
         if not markdict:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
-        return {"previous": retrieve_previous(oid, m), "current": markdict, "next": retrieve_next(oid, m)}
+    
+        return_prev, pageDown = retrieve_previous(oid, m)
+        return_next, pageUp = retrieve_next(oid, m)
+    
+        return {"previous": return_prev,
+                "current": markdict,
+                "next": return_next,
+                "pageDown": pageDown,
+                "pageUp" : pageUp
+                }
     except:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
 
@@ -54,11 +63,6 @@ def update_markdict_data(
 
     modelResult = markdict["modelResult"]
     similarWords = markdict["similarWords"]
-    
-    print("s i m i l a r  w o r d s ")
-    for word in similarWords:
-        print(word)
-    print("=========================")
     
     user_input = req["userInput"]
 
