@@ -26,8 +26,12 @@ const TextList = ({ mode, setMode }) => {
 
   useEffect(() => {
     document.title = '마크클라우드 텍스트 검수 > 홈';
+    localStorage.removeItem('page');
+    localStorage.removeItem('limit');
+    localStorage.removeItem('totalPage');
   }, []);
 
+  //= 텍스트 리스트
   const getTextList = async () => {
     if (prevent) return;
     prevent = true;
@@ -46,6 +50,7 @@ const TextList = ({ mode, setMode }) => {
     } else return catchErrorHandler(result);
   };
 
+  //= 검색 결과 텍스트 리스트
   const searchList = async () => {
     if (!option && !word) return;
     let result;
@@ -67,6 +72,7 @@ const TextList = ({ mode, setMode }) => {
     } else return catchErrorHandler(result);
   };
 
+  //= 날짜 -> 유닉스 타임으로 변환
   const unix2time = t => {
     const date = new Date(t * 1000);
     return `${date.getFullYear()}-${addZero(date.getMonth() + 1)}-${addZero(
@@ -74,6 +80,7 @@ const TextList = ({ mode, setMode }) => {
     )} ${addZero(date.getHours())}:${addZero(date.getMinutes())}`;
   };
 
+  //= 날짜 형식 반환 함수
   const returnDateStamp = d => {
     return `${d.getFullYear()}-${addZero(d.getMonth() + 1)}-${addZero(
       d.getDate()
@@ -86,6 +93,7 @@ const TextList = ({ mode, setMode }) => {
     }:${addZero(d.getMinutes())}`;
   };
 
+  //= 테이블 렌더 함수
   const renderTableFn = () => {
     return list.reduce(
       (
@@ -111,11 +119,14 @@ const TextList = ({ mode, setMode }) => {
             <Link></Link>
             <tr
               className={idx % 2 === 1 ? 'odd' : 'even'}
-              onClick={() =>
+              onClick={() => {
+                localStorage.setItem('page', pageInfo.page);
+                localStorage.setItem('limit', pageInfo.limit);
+                localStorage.setItem('totalPage', pageInfo.totalPage);
                 option && word
                   ? navigate(`/detail/${tf}/${option}/${word}/${id}`)
-                  : navigate(`/detail/${tf}/${id}`)
-              }>
+                  : navigate(`/detail/${tf}/${id}`);
+              }}>
               <td className='tablet-none'>{index}</td>
               <td>{originalEng}</td>
               <td>{productNameEng}</td>
@@ -139,7 +150,9 @@ const TextList = ({ mode, setMode }) => {
                     </td>
                   )}
                   <td className='tablet-none'>{worker}</td>
-                  <td className='tablet-none'>{dateModified === null ? '' : unix2time(dateModified)}</td>
+                  <td className='tablet-none'>
+                    {dateModified === null ? '' : unix2time(dateModified)}
+                  </td>
                 </>
               ) : (
                 <>
@@ -274,7 +287,7 @@ const TextList = ({ mode, setMode }) => {
         </div>
         <div className='totalCount'>
           <span>전체 데이터 개수:</span>
-          <span>{pageInfo?.total.toLocaleString()}</span>
+          <span>{pageInfo?.total?.toLocaleString()}</span>
           <span>개</span>
         </div>
         <div className='content'>
