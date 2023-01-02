@@ -16,5 +16,5 @@ MONGO_DETAILS = f"mongodb://{MONGO_USER}:{MONGO_PWD}@{MONGO_HOST}:{MONGO_PORT}"
 client = MongoClient(MONGO_DETAILS)
 database = client.text_review
 # mark_dict_collection = database.get_collection("mark_dict")
-mark_dict_collection = database.get_collection("mark_dict_test")
+mark_dict_collection = database.get_collection("mark_dict")
 user_collection = database.get_collection("user")
