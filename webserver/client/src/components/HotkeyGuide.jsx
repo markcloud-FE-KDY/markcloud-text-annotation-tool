@@ -62,6 +62,12 @@ const HotkeyGuide = () => {
           </div>
           <div className='row keys'>
             <div>
+              <span className='key'>$</span>
+            </div>
+            <div>검수 완료 단어 수정</div>
+          </div>
+          <div className='row keys'>
+            <div>
               <span className='key'>Space</span>
             </div>
             <div>PASS</div>
