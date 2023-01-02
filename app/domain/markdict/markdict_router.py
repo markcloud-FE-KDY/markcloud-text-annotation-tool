@@ -79,7 +79,7 @@ def update_markdict_data(
     else:
         resultStatus = "direct"
 
-    update_db_directInput(oid, user_input_list, resultStatus, worker)
-    update_cache_directInput(oid, user_input_list, resultStatus, worker)
+    update_db(oid, user_input_list, resultStatus, worker)
+    update_cache(oid, user_input_list, resultStatus, worker)
 
     return {"status": "complete"}
