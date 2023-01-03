@@ -1,34 +1,14 @@
 import { useState, useEffect } from 'react';
-import $ from 'jquery';
 import { GrFormPrevious, GrFormNext } from 'react-icons/gr';
-import { changeState, enterFn } from 'js/common';
+import { changeState } from 'js/common';
 
 const Pagination = ({ pageInfo, setPageInfo }) => {
   const [pageGroup, setPageGroup] = useState([]);
   const { totalPage, page } = pageInfo;
-  const [movePage, setMovePage] = useState(page);
-
-  const pageSearch = () => {
-    if (movePage > totalPage || movePage === '0') {
-      setMovePage(page);
-      $('.pageInput').focus();
-      if (movePage > totalPage)
-        alert(
-          '입력하신 숫자가 총 페이지 수보다 더 큽니다.\n다시 입력해 주세요.'
-        );
-      else if (movePage === '0')
-        alert('잘못된 입력입니다.\n다시 입력해 주세요.');
-      return;
-    }
-    changePage(Number(movePage));
-  };
 
   const changePage = p => {
     if (page === p) return;
-    else {
-      changeState(setPageInfo, 'page', p);
-      setMovePage('');
-    }
+    else changeState(setPageInfo, 'page', p);
   };
   const changePageGroup = p => {
     const arr = [];
@@ -112,19 +92,6 @@ const Pagination = ({ pageInfo, setPageInfo }) => {
       {pageInfo.totalPage > 1 ? (
         <div className='paging row'>
           <ul className='pagination row'>{renderPagination()}</ul>
-          <div className='pageInput'>
-            <span>
-              <input
-                type='text'
-                className='pageInput'
-                value={movePage}
-                onChange={e => setMovePage(e.target.value)}
-                onKeyDown={e => enterFn(e, pageSearch)}
-              />{' '}
-              / {totalPage}
-            </span>
-            <button onClick={pageSearch}>이동</button>
-          </div>
         </div>
       ) : (
         ''
