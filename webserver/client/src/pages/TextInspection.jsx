@@ -94,9 +94,7 @@ const TextInspection = ({ mode, setMode }) => {
         info.next === null
       ) {
         navigate('/home/0');
-        return alert(
-          '마지막 페이지이므로 리스트로 이동합니다.'
-        );
+        return alert('마지막 페이지이므로 리스트로 이동합니다.');
       } else changePage('next');
     } else return catchErrorHandler(result);
   };
@@ -251,7 +249,8 @@ const TextInspection = ({ mode, setMode }) => {
                   {info?.humanCheck
                     ? (info?.resultStatus === 'direct' && '직접') ||
                       (info?.resultStatus === 'candidate' && '후보') ||
-                      (info?.resultStatus === 'model' && '모델')
+                      (info?.resultStatus === 'model' && '모델') ||
+                      (info?.resultStatus === 'original' && '기본')
                     : info?.modelResult}
                 </div>
               </div>
@@ -261,7 +260,9 @@ const TextInspection = ({ mode, setMode }) => {
                 </span>
                 <div className='similarWords column'>
                   {info?.humanCheck
-                    ? info?.directInput?.length > 1
+                    ? info?.resultStatus === 'original'
+                      ? info?.modelResult
+                      : info?.directInput?.length > 1
                       ? info?.directInput?.reduce((acc, i) => {
                           return (
                             <>
