@@ -26,9 +26,6 @@ const TextList = ({ mode, setMode }) => {
 
   useEffect(() => {
     document.title = '마크클라우드 텍스트 검수 > 홈';
-    localStorage.removeItem('page');
-    localStorage.removeItem('limit');
-    localStorage.removeItem('totalPage');
   }, []);
 
   //= 텍스트 리스트
@@ -120,9 +117,6 @@ const TextList = ({ mode, setMode }) => {
             <tr
               className={idx % 2 === 1 ? 'odd' : 'even'}
               onClick={() => {
-                localStorage.setItem('page', pageInfo.page);
-                localStorage.setItem('limit', pageInfo.limit);
-                localStorage.setItem('totalPage', pageInfo.totalPage);
                 option && word
                   ? navigate(`/detail/${tf}/${option}/${word}/${id}`)
                   : navigate(`/detail/${tf}/${id}`);

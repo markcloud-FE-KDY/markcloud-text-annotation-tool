@@ -42,31 +42,20 @@ const TextInspection = ({ mode, setMode }) => {
         clone = result?.data?.current;
         clone.next = result?.data?.next;
         clone.prev = result?.data?.previous;
-        clone.pageUp = result?.data?.pageUp;
-        clone.pageDown = result?.data?.pageDown;
         return clone;
       });
     } else return catchErrorHandler(result);
   };
 
+  useEffect(() => {
+    console.log(info);
+  }, [info]);
+
   //= direction에 따라 페이지 변경
   const changePage = direction => {
-    if (direction === 'next' && info.pageUp)
-      localStorage.setItem('page', Number(localStorage.getItem('page')) + 1);
-    else if (direction === 'prev' && info.pageDown)
-      localStorage.setItem('page', Number(localStorage.getItem('page')) - 1);
-    else if (
-      direction === 'next' &&
-      Number(localStorage.getItem('totalPage')) ===
-        Number(localStorage.getItem('page')) &&
-      info.next === null
-    )
+    if (direction === 'next' && info.next === null)
       return alert(`마지막 페이지입니다.`);
-    else if (
-      direction === 'prev' &&
-      Number(localStorage.getItem('page')) === 1 &&
-      info.prev === null
-    )
+    else if (direction === 'prev' && info.prev === null)
       return alert(`첫 페이지입니다.`);
 
     if (option?.length && word?.length)
@@ -89,10 +78,7 @@ const TextInspection = ({ mode, setMode }) => {
       setSimilar('');
       $('input').blur();
       if (status === 'pass') getDetail();
-      if (
-        localStorage.getItem('page') === localStorage.getItem('totalPage') &&
-        info.next === null
-      ) {
+      if (info.next === null) {
         navigate('/home/0');
         return alert('마지막 페이지이므로 리스트로 이동합니다.');
       } else changePage('next');
