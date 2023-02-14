@@ -14,57 +14,61 @@ router = APIRouter()
 
 
 @router.get("/list_search")
-def markdict_list_search(m: MarkdictList = Depends()):
-    search_option = form_search_option(m)
+def markdict_list_search(m: MarkdictList = Depends(), current_user: User = Depends(get_current_user)):
+    
+    user_id = current_user["username"]
+    search_option = assign_project(form_search_option(m), user_id)
+    
     total = get_count(search_option)
     _markdict_list = retrieve_markdict_list(m, search_option)
     return {
-        "meta": {"total": total, "page": m.page, "limit": m.size, "page_count": math.ceil(total / m.size)},
+        "meta": {
+            "total": total, 
+            "page": m.page, 
+            "limit": m.size, 
+            "page_count": math.ceil(total / m.size)
+            },
         "data": _markdict_list,
     }
 
 
 @router.get("/detail")
-def get_markdict_data(oid: str, m: MarkdictList = Depends()):
+def get_markdict_data(oid: str, m: MarkdictList = Depends(), current_user: User = Depends(get_current_user)):
     try:
-        markdict = retrieve_markdict(oid, m)
-        if not markdict:
-            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
-    
-        # return_prev, pageDown = retrieve_previous(oid, m)
-        # return_next, pageUp = retrieve_next(oid, m)
-        return_prev = retrieve_previous(oid, m)
-        return_next = retrieve_next(oid, m)
-        
-    
-        return {"previous": return_prev,
-                "current": markdict,
-                "next": return_next,
-                # "pageDown": pageDown,
-                # "pageUp" : pageUp
-                }
-    # except:
-    #     raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
-    
-    except Exception as e:
-        print(e)
+        user_id = current_user["username"]
+        print("login :: [", user_id, "]")
 
+        markdict = retrieve_markdict(oid)
+        
+        # assign project
+        search_option = assign_project(form_search_option(m), user_id)
+        
+        # cache x & projectCode o
+        prev_id = retrieve_prev_id(oid, search_option_prev=search_option[:])
+        next_id = retrieve_next_id(oid, search_option_next=search_option[:])
+        
+        return {"previous": prev_id,
+                "current": markdict,
+                "next": next_id,
+                }
+    except:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
+    
 
 @router.post("/update")
 def update_markdict_data(
     oid: str, _pass: bool, req: UpdateMarkDictModel = Body(...), current_user: User = Depends(get_current_user)
 ):
-    # print("update")
     req = {k: v for k, v in req.dict().items() if v is not None}
 
     worker = current_user["username"]
-    print(worker)
 
     if _pass == True:
         add_pass_list(oid)
         return {"status": "pass"}
 
-    markdict = retrieve_markdict(oid, req)
+    # markdict = retrieve_markdict(oid, req)
+    markdict = retrieve_markdict(oid)
 
     if not markdict:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Data not found")

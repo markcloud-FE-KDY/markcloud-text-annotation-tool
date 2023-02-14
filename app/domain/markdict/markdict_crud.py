@@ -56,17 +56,13 @@ def retrieve_markdict_list(m: MarkdictList, search_option: list):
     
 # current
 # def retrieve_markdict(oid: str, m: MarkdictData) -> dict:
-def retrieve_markdict(oid: str, m: MarkdictList) -> dict:
-    if not oid:
-        markdict = list(mark_dict_collection.find().sort("_id", 1).limit(1))[0]
-    else:
-        markdict = mark_dict_collection.find_one({"_id": ObjectId(oid)})
+def retrieve_markdict(oid: str) -> dict:
+    markdict = mark_dict_collection.find_one({"_id": ObjectId(oid)})
     if markdict:
         return markdict_detail_helper(markdict)
-    print("wrong oid")
     return None
-    
-    
+
+    """
     #### cache o
     # cache_hit = markdictCache.find_by_oid(oid)
     # if cache_hit:
@@ -80,9 +76,12 @@ def retrieve_markdict(oid: str, m: MarkdictList) -> dict:
     # add_cache(m, search_option)
     # return markdictCache._cache[oid]
     
+    """
+    
     
 # previous
 def retrieve_previous(oid: str, m: MarkdictList):
+    """
     # if not oid:
     #     print("not oid")
     #     return None
@@ -96,6 +95,7 @@ def retrieve_previous(oid: str, m: MarkdictList):
     #         .sort("_id", -1)
     #         .limit(1)
     #         )
+    """
     
     search_option = form_search_option(m)
     search_option.append({"_id": {"$lt": ObjectId(oid)}})
@@ -110,12 +110,11 @@ def retrieve_previous(oid: str, m: MarkdictList):
     if previous_data:
         previous_data = previous_data[0]
         prev_oid = str(previous_data["_id"])
-        print(prev_oid, "==")
         return prev_oid
     else:
         return None
     
-    
+    """
     # #### cache o
     # curr_idx = markdictCache._cache_key_list.index(oid)
     
@@ -146,11 +145,12 @@ def retrieve_previous(oid: str, m: MarkdictList):
     # prev_idx = curr_idx - 1
     # prev_oid = markdictCache._cache_key_list[prev_idx]
     # return prev_oid, False
+    """
     
-
 
 # next
 def retrieve_next(oid: str, m: MarkdictList):
+    """
     # if not oid:
     #     next_data = list(mark_dict_collection.find({"humanCheck": False}).sort("_id", 1).skip(1).limit(1))[0]
     # else:
@@ -158,8 +158,11 @@ def retrieve_next(oid: str, m: MarkdictList):
     #     search_option.append({"_id": {"$gt": ObjectId(oid)}})
     #     next_data = mark_dict_collection.find_one({"$and": search_option})
     
+    """
+    
     search_option = form_search_option(m)
     search_option.append({"_id": {"$gt": ObjectId(oid)}})
+    
     next_data = mark_dict_collection.find_one({"$and": search_option})
     
     if next_data:
@@ -168,6 +171,7 @@ def retrieve_next(oid: str, m: MarkdictList):
     else:
         return None
     
+    """
     # #### cache o
     # curr_idx = markdictCache._cache_key_list.index(oid)
     
@@ -194,7 +198,34 @@ def retrieve_next(oid: str, m: MarkdictList):
     # next_idx = curr_idx + 1
     # next_oid = markdictCache._cache_key_list[next_idx]
     # return next_oid, False
+    """
+    
 
+
+# projectCode ############################################################
+
+def retrieve_prev_id(oid: str, search_option_prev: list):
+    search_option_prev.append({"_id": {"$lt": ObjectId(oid)}})
+
+    previous_data = mark_dict_collection.find_one({"$and": search_option_prev}, sort=[("_id", -1)])
+    if previous_data:
+        prev_oid = str(previous_data["_id"])
+        return prev_oid
+    else:
+        return None
+    
+
+def retrieve_next_id(oid: str, search_option_next: list):
+    search_option_next.append({"_id": {"$gt": ObjectId(oid)}})
+    
+    next_data = mark_dict_collection.find_one({"$and": search_option_next})
+    if next_data:
+        next_oid = str(next_data["_id"])
+        return next_oid
+    else:
+        return None
+
+##############################################################################
 
 # Update
 def update_db(oid: str, user_input_list: list, result_status: str, worker: str):
@@ -227,4 +258,6 @@ def update_db(oid: str, user_input_list: list, result_status: str, worker: str):
 def add_pass_list(oid: str):
     # markdictCache._cache[oid]["passCheck"] = True
     oid = ObjectId(oid)
-    mark_dict_collection.update_one({"_id": oid}, {"$set": {"Check.passCheck": True}})
+    mark_dict_collection.update_one({"_id": oid}, 
+                                    {"$set": {"Check.passCheck": True}}
+                                    )
