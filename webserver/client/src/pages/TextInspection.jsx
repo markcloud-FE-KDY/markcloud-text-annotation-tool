@@ -47,10 +47,6 @@ const TextInspection = ({ mode, setMode }) => {
     } else return catchErrorHandler(result);
   };
 
-  useEffect(() => {
-    console.log(info);
-  }, [info]);
-
   //= direction에 따라 페이지 변경
   const changePage = direction => {
     if (direction === 'next' && info.next === null)
