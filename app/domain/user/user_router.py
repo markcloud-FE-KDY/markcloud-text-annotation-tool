@@ -21,6 +21,9 @@ router = APIRouter(prefix="/markdict")
 
 @router.post("/create", status_code=status.HTTP_204_NO_CONTENT)
 def user_create(_user_create: user_schema.UserCreate):
+    user = user_crud.get_existing_user(user_create=_user_create)
+    if user:
+        raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="Already existing username")
     user_crud.create_user(user_create=_user_create)
 
 
@@ -33,7 +36,6 @@ def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends()):
             detail="Incorrect username or password",
             headers={"WWW-Authenticate": "Bearer"},
         )
-
     # access token
     data = {"sub": user["username"], "exp": datetime.utcnow() + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)}
     access_token = jwt.encode(data, SECRET_KEY, algorithm=ALGORITHM)
