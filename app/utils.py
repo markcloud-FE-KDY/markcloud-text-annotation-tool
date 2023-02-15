@@ -73,6 +73,11 @@ def form_search_option(m: MarkdictList):
 
     search_option = [filter_tf[m.tf]]
 
+    if m.tf == 0:
+        search_option.append({"Check.passCheck":False})
+    
+    # if m.tf in [1,2,3,4]:
+    #     search_option.append({"Check.finalCheck":False})
     if m.tf == 2:
         search_option.append({"resultStatus": "model"})
     if m.tf == 3:
@@ -86,6 +91,18 @@ def form_search_option(m: MarkdictList):
         search_option.append(search_by_worker(m.worker))
     if m.date_start:
         search_option.append(search_by_time(m.date_start, m.date_end))
+    return search_option
+
+
+def assign_project(search_option:list, user_id:str):
+    prj = {
+        "work1": 1,
+        "work2": 2,
+        "work3": 3
+    }
+    if user_id not in prj:
+        return search_option
+    search_option.append({"projectCode":prj[user_id]})
     return search_option
 
 

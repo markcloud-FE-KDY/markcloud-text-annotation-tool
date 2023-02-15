@@ -5,6 +5,10 @@ from app.database import *
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 
+def get_existing_user(user_create: UserCreate):
+    return user_collection.find_one({"username":user_create.username})
+
+
 def create_user(user_create: UserCreate):
     user_collection.insert_one(
         {
