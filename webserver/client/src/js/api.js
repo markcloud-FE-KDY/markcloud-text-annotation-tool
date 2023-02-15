@@ -1,6 +1,11 @@
 import axios from 'axios';
 import { getCookie } from './cookie';
 
+const headers = {
+  'Content-Type': 'application/json',
+  Authorization: `Bearer ${getCookie('myToken')}`,
+};
+
 // = 에러 핸들링
 const catchError = async error => {
   const { status } = error?.response;
@@ -46,7 +51,8 @@ export const getList = async (
         keyword ? `&keyword=${keyword}` : ''
       }${worker ? `&worker=${worker}` : ''}&date_start=${
         date_start ? `${date_start}` : '0'
-      }&date_end=${date_end ? `${date_end}` : '0'}`
+      }&date_end=${date_end ? `${date_end}` : '0'}`,
+      { headers }
     );
   } catch (error) {
     return catchError(error);
@@ -69,7 +75,8 @@ export const getTextDetail = async (
         worker ? `&worker=${worker}` : ''
       }&date_start=${date_start ? `${date_start}` : '0'}&date_end=${
         date_end ? `${date_end}` : '0'
-      }`
+      }`,
+      { headers }
     );
   } catch (error) {
     return catchError(error);
@@ -78,10 +85,6 @@ export const getTextDetail = async (
 
 // = 텍스트 상세내역 업데이트
 export const modifyText = async (oid, pass, data) => {
-  const headers = {
-    'Content-Type': 'application/json',
-    Authorization: `Bearer ${getCookie('myToken')}`,
-  };
   try {
     return await axios.post(`/markdict/update?oid=${oid}&_pass=${pass}`, data, {
       headers,
