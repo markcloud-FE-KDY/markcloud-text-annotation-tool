@@ -23,7 +23,7 @@ const catchError = async error => {
   }
 };
 
-// = 지원님 로그인 API
+// = 로그인 API
 export const signIn = async (id, pw) => {
   try {
     return await axios.post(
